@@ -1,6 +1,8 @@
 #include <iostream>
-//#include <sstream>
+
 #include <opencv2/opencv.hpp>
+
+#include "ColorSegmentation.h"
 
 const std::string keys =
     "{help h    |   |print help}"
@@ -8,20 +10,31 @@ const std::string keys =
     ;
 
 cv::Mat rawImage, tempImage, outputImage;
-cv::Mat yuvImage, thresholdImage, filterImage, openImage, closeImage;
 
 cv::FileStorage fs;
 
 int colorNumb = 0;
 std::string colorState = "Team Red";
 
+ColorSegmentation colorSegmentation;
+
+cv::Scalar minValue, maxValue;
+
+void ValueCallback(int thres, void* in_data)
+{
+	double* value = (double*)in_data;
+	*value = double(thres);
+}
+
 void onMouse(int event, int x, int y, int flags, void* in_param)
 {
-    int rValue, gValue, bValue;
-    int yValue, uValue, vValue;
-
     if(y >= 10 && y <= 263 && x >= 10 && x <= 394)
     {
+    	cv::Mat yuvImage;
+    	int yValue, uValue, vValue;
+
+    	//rawImage.copyTo(yuvImage);
+    	cv::cvtColor(rawImage, yuvImage, cv::COLOR_BGR2YUV);
 		yValue = yuvImage.at<cv::Vec3b>(y-10, x-10)[0];
 		uValue = yuvImage.at<cv::Vec3b>(y-10, x-10)[1];
 		vValue = yuvImage.at<cv::Vec3b>(y-10, x-10)[2];
@@ -31,13 +44,6 @@ void onMouse(int event, int x, int y, int flags, void* in_param)
 		std::string yuvText = yuvTextStream.str();
 
 		rawImage.copyTo(tempImage);
-
-		int deltaYValue = yValue*0.20;
-		int deltaUValue = uValue*0.20;
-		int deltaVValue = vValue*0.20;
-		cv::inRange(yuvImage, cv::Scalar(yValue - deltaYValue, uValue - deltaUValue, vValue - deltaVValue),
-			cv::Scalar(yValue + deltaYValue, uValue + deltaUValue, vValue + deltaVValue), thresholdImage);
-
 		cv::putText(tempImage, yuvText, cv::Point(0,230),
 				cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 0, 255), 1.5, cv::LINE_AA);
 		cv::putText(tempImage, colorState, cv::Point(0,248),
@@ -45,35 +51,46 @@ void onMouse(int event, int x, int y, int flags, void* in_param)
 
 		if(event == cv::EVENT_LBUTTONUP && colorNumb < 4)
 		{
+	    	std::cout << "min: " << minValue << std::endl;
+	    	std::cout << "max: " << maxValue << std::endl;
 			if(colorNumb == 0)
 			{
-				//fs << "#Team Red thresold";
-				fs << "TeamRedMin" << cv::Scalar(yValue - deltaYValue, uValue - deltaUValue, vValue - deltaVValue);
-				fs << "TeamRedMax" << cv::Scalar(yValue + deltaYValue, uValue + deltaUValue, vValue + deltaVValue);
+				fs << "TeamRedMin" << minValue;
+				fs << "TeamRedMax" << maxValue;
 				colorState = "Team Green";
+				colorNumb++;
 			}
-			if(colorNumb == 1)
+			else if(colorNumb == 1)
 			{
-				fs << "TeamGreenMin" << cv::Scalar(yValue - deltaYValue, uValue - deltaUValue, vValue - deltaVValue);
-				fs << "TeamGreenMax" << cv::Scalar(yValue + deltaYValue, uValue + deltaUValue, vValue + deltaVValue);
+				fs << "TeamGreenMin" << minValue;
+				fs << "TeamGreenMax" << maxValue;
 				colorState = "Number One";
+				colorNumb++;
 			}
-			if(colorNumb == 2)
+			else if(colorNumb == 2)
 			{
-				fs << "TeamNumb1Min" << cv::Scalar(yValue - deltaYValue, uValue - deltaUValue, vValue - deltaVValue);
-				fs << "TeamNumb1Max" << cv::Scalar(yValue + deltaYValue, uValue + deltaUValue, vValue + deltaVValue);
+				fs << "TeamNumb1Min" << minValue;
+				fs << "TeamNumb1Max" << maxValue;
 				colorState = "Number Two";
+				colorNumb++;
 			}
-
-			if(colorNumb == 3)
+			else if(colorNumb == 3)
 			{
-				fs << "TeamNumb2Min" << cv::Scalar(yValue - deltaYValue, uValue - deltaUValue, vValue - deltaVValue);
-				fs << "TeamNumb2Max" << cv::Scalar(yValue + deltaYValue, uValue + deltaUValue, vValue + deltaVValue);
+				fs << "TeamNumb2Min" << minValue;
+				fs << "TeamNumb2Max" << maxValue;
 				colorState = "All Done";
 				fs.release();
+				colorNumb++;
 			}
-
-			colorNumb++;
+		}
+		else if(event == cv::EVENT_RBUTTONUP)
+		{
+			cv::setTrackbarPos("yMinValue", "Config", yValue - 10);
+			cv::setTrackbarPos("uMinValue", "Config", uValue - 10);
+			cv::setTrackbarPos("vMinValue", "Config", vValue - 10);
+			cv::setTrackbarPos("yMaxValue", "Config", yValue + 10);
+			cv::setTrackbarPos("uMaxValue", "Config", uValue + 10);
+			cv::setTrackbarPos("vMaxValue", "Config", vValue + 10);
 		}
 	}
 }
@@ -93,22 +110,12 @@ int main(int argc, char** argv)
     std::string imageName = parser.get<std::string>("image");
     std::cout << "Image Name: " << imageName << std::endl;
     rawImage = cv::imread(imageName);
+    cv::resize(rawImage, rawImage, cv::Size(384, 253));
     rawImage.copyTo(tempImage);
 
-    thresholdImage = cv::Mat::zeros(rawImage.size(), CV_8UC1);
-
-    cv::cvtColor(rawImage, yuvImage, cv::COLOR_BGR2YUV);
 
     cv::namedWindow("BigImage");
     cv::setMouseCallback("BigImage", onMouse, NULL);
-
-    std::vector<std::vector<cv::Point> > contours;
-
-    cv::Mat element = cv::getStructuringElement( cv::MORPH_RECT,
-                           cv::Size( 5, 5 ), cv::Point(2, 2));
-
-	cv::Moments mnt;
-	int cx, cy;
 
 	cv::Mat bigImage(536, 798, rawImage.type());
 	cv::Rect image1(10, 10, 384, 253);
@@ -116,32 +123,36 @@ int main(int argc, char** argv)
 	cv::Rect image3(10, 273, 384, 253);
 	cv::Rect image4(404, 273, 384, 253);
 
+	//cv::Scalar minValue, maxValue;
 
+	cv::namedWindow("Config", cv::WINDOW_AUTOSIZE);
+	cv::createTrackbar("yMinValue", "Config", NULL,
+						255, ValueCallback, (void*)(&minValue.val[0]));
+	cv::createTrackbar("uMinValue", "Config", NULL,
+						255, ValueCallback, (void*)(&minValue.val[1]));
+	cv::createTrackbar("vMinValue", "Config", NULL,
+						255, ValueCallback, (void*)(&minValue.val[2]));
+	cv::createTrackbar("yMaxValue", "Config", NULL,
+						255, ValueCallback, (void*)(&maxValue.val[0]));
+	cv::createTrackbar("uMaxValue", "Config", NULL,
+						255, ValueCallback, (void*)(&maxValue.val[1]));
+	cv::createTrackbar("vMaxValue", "Config", NULL,
+						255, ValueCallback, (void*)(&maxValue.val[2]));
+
+	std::vector<cv::Point2d> points;
     while(1)
     {
     	rawImage.copyTo(outputImage);
-    	cv::morphologyEx(thresholdImage, openImage, cv::MORPH_OPEN, element);
-    	//cv::morphologyEx(openImage, closeImage, cv::MORPH_CLOSE, element);
-    	openImage.copyTo(filterImage);
-        cv::findContours(filterImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_TC89_KCOS);
-        if(contours.size() < 50)
-        {
-            for(uint16_t i=0; i<contours.size(); i++)
-            {
-            	cv::drawContours(outputImage, contours, i, cv::Scalar(0,255,255), 1);
-            	mnt = cv::moments(contours[i]);
-            	cx = int(mnt.m10/mnt.m00);
-            	cy = int(mnt.m01/mnt.m00);
-            	cv::line(outputImage, cv::Point(cx-5, cy), cv::Point(cx+5, cy),
-            			cv::Scalar(0, 0, 255), 1, cv::LINE_AA, 0);
-            	cv::line(outputImage, cv::Point(cx, cy-5), cv::Point(cx, cy+5),
-            			cv::Scalar(0, 0, 255), 1, cv::LINE_AA, 0);
-            }
-        }
+    	colorSegmentation.setThreshold(minValue, maxValue);
+
+    	points.clear();
+    	colorSegmentation.getBlocks(rawImage, points);
+    	colorSegmentation.drawPoints(outputImage, cv::Scalar(0, 255, 255));
+    	colorSegmentation.drawContours(outputImage, cv::Scalar(255, 255 ,0));
 
         tempImage.copyTo(bigImage(image1));
-        cv::cvtColor(thresholdImage, bigImage(image2), cv::COLOR_GRAY2BGR);
-        cv::cvtColor(openImage, bigImage(image4), cv::COLOR_GRAY2BGR);
+        cv::cvtColor(colorSegmentation.m_thresholdImage, bigImage(image2), cv::COLOR_GRAY2BGR);
+        cv::cvtColor(colorSegmentation.m_filterImage, bigImage(image4), cv::COLOR_GRAY2BGR);
         outputImage.copyTo(bigImage(image3));
         cv::imshow("BigImage", bigImage);
 

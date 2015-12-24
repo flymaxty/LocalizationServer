@@ -4,9 +4,9 @@
 
 int main(void)
 {
-	cv::VideoCapture cam(0);
-	//cam.set(cv::CAP_PROP_FRAME_WIDTH, CAM_FRAME_WIDTH);
-	//cam.set(cv::CAP_PROP_FRAME_HEIGHT, CAM_FRAME_HEIGHT);
+	cv::VideoCapture cam(1);
+	//cam.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
+	//cam.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
 
 	cv::Mat rawImage;
 	while(1)
