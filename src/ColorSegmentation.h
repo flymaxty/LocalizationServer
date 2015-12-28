@@ -25,11 +25,11 @@ public:
 	ColorSegmentation();
 	~ColorSegmentation();
 
-	void drawPoints(cv::Mat& in_image, cv::Scalar in_color);
-	void drawContours(cv::Mat& in_image, cv::Scalar in_color);
+	void drawPoints(cv::InputOutputArray in_image, cv::Scalar in_color);
+	void drawContours(cv::InputOutputArray in_image, cv::Scalar in_color);
 
 	bool setThreshold(cv::Scalar minValue, cv::Scalar maxValue);
-	bool getBlocks(cv::Mat& in_image, std::vector<cv::Point2d>& in_points);
+	bool getBlocks(cv::InputArray in_image, std::vector<cv::Point2d>& in_points);
 };
 
 #endif /* SRC_COLORSEGMENTATION_H_ */

@@ -24,30 +24,33 @@ bool ColorSegmentation::setThreshold(cv::Scalar minValue, cv::Scalar maxValue)
 	m_maxValue = maxValue;
 }
 
-void ColorSegmentation::drawPoints(cv::Mat& in_image, cv::Scalar in_color)
+void ColorSegmentation::drawPoints(cv::InputOutputArray in_image, cv::Scalar in_color)
 {
+	cv::Mat image = in_image.getMat();
 	uint8_t length = 5;
-
     for(uint16_t i=0; i<m_points.size(); i++)
     {
-    	cv::line(in_image, cv::Point(m_points[i].x-length, m_points[i].y),
+    	cv::line(image, cv::Point(m_points[i].x-length, m_points[i].y),
     		cv::Point(m_points[i].x+length, m_points[i].y), in_color, 1, cv::LINE_AA, 0);
-    	cv::line(in_image, cv::Point(m_points[i].x, m_points[i].y-length),
+    	cv::line(image, cv::Point(m_points[i].x, m_points[i].y-length),
     		cv::Point(m_points[i].x, m_points[i].y+length), in_color, 1, cv::LINE_AA, 0);
     }
 }
 
-void ColorSegmentation::drawContours(cv::Mat& in_image, cv::Scalar in_color)
+void ColorSegmentation::drawContours(cv::InputOutputArray in_image, cv::Scalar in_color)
 {
+	cv::Mat image = in_image.getMat();
+
 	for(uint16_t i=0; i<m_contours.size(); i++)
 	{
-		cv::drawContours(in_image, m_contours, i, in_color, 1, cv::LINE_AA);
+		cv::drawContours(image, m_contours, i, in_color, 1, cv::LINE_AA);
 	}
 }
 
-bool ColorSegmentation::getBlocks(cv::Mat& in_image, std::vector<cv::Point2d>& in_points)
+bool ColorSegmentation::getBlocks(cv::InputArray in_image, std::vector<cv::Point2d>& in_points)
 {
-	cv::Mat rawImage = in_image.clone();
+	cv::Mat rawImage = in_image.getMat();
+
 	cv::cvtColor(rawImage, m_yuvImage, cv::COLOR_BGR2YUV);
 	cv::inRange(m_yuvImage, m_minValue, m_maxValue, m_thresholdImage);
 

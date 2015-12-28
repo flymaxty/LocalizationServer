@@ -8,8 +8,5 @@ TARGET_LINK_LIBRARIES(localizationServer ${OpenCV_LIBS})
 ADD_EXECUTABLE(capture capture.cpp)
 TARGET_LINK_LIBRARIES(capture ${OpenCV_LIBS})
 
-ADD_EXECUTABLE(getColor getColor.cpp ColorSegmentation.cpp)
+ADD_EXECUTABLE(getColor getColor.cpp ColorSegmentation.cpp DataCenter.cpp)
 TARGET_LINK_LIBRARIES(getColor ${OpenCV_LIBS})
-
-ADD_EXECUTABLE(param param.cpp)
-TARGET_LINK_LIBRARIES(param ${OpenCV_LIBS})

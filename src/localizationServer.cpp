@@ -30,8 +30,8 @@ int main(int argc, char** argv)
     }
 
     dataCenter.loadParam();
-    redSegmentation.setThreshold(dataCenter.m_teamRedMin, dataCenter.m_teamRedMax);
-    greenSegmentation.setThreshold(dataCenter.m_teamGreenMin, dataCenter.m_teamGreenMax);
+    redSegmentation.setThreshold(dataCenter.m_teamAMin, dataCenter.m_teamAMin);
+    greenSegmentation.setThreshold(dataCenter.m_teamBMin, dataCenter.m_teamBMin);
     numb1Segmentation.setThreshold(dataCenter.m_teamNumb1Min, dataCenter.m_teamNumb1Max);
     numb2Segmentation.setThreshold(dataCenter.m_teamNumb2Min, dataCenter.m_teamNumb2Max);
 
@@ -60,32 +60,32 @@ int main(int argc, char** argv)
         //numb1Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(255, 255, 0));
         //numb2Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 255));
 
-        teamDetect.getTeam(redPoints, numb1Points, numb2Points, dataCenter.m_teamRed);
-        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 0, 255), dataCenter.m_teamRed);
-        teamDetect.getTeam(greenPoints, numb1Points, numb2Points, dataCenter.m_teamGreen);
-        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 255, 0), dataCenter.m_teamGreen);
+        teamDetect.getTeam(redPoints, numb1Points, numb2Points, dataCenter.m_teamA);
+        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 0, 255), dataCenter.m_teamB);
+        teamDetect.getTeam(greenPoints, numb1Points, numb2Points, dataCenter.m_teamB);
+        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
 
         std::cout << "> Red Team <" << std::endl;
         for(int i=0; i<4; i++)
         {
-        	if(dataCenter.m_teamRed.robots[i].online)
+        	if(dataCenter.m_teamA.robots[i].online)
         	{
-            	std::cout << "id: " << int(dataCenter.m_teamRed.robots[i].id);
-            	std::cout << ",\t x: " << dataCenter.m_teamRed.robots[i].x;
-            	std::cout << ",\t y: " << dataCenter.m_teamRed.robots[i].y;
-            	std::cout << ",\t th: " << dataCenter.m_teamRed.robots[i].theta;
+            	std::cout << "id: " << int(dataCenter.m_teamA.robots[i].id);
+            	std::cout << ",\t x: " << dataCenter.m_teamA.robots[i].x;
+            	std::cout << ",\t y: " << dataCenter.m_teamA.robots[i].y;
+            	std::cout << ",\t th: " << dataCenter.m_teamA.robots[i].theta;
             	std::cout << std::endl;
         	}
         }
         std::cout << "> Green Team <" << std::endl;
         for(int i=0; i<4; i++)
         {
-        	if(dataCenter.m_teamGreen.robots[i].online)
+        	if(dataCenter.m_teamB.robots[i].online)
         	{
-				std::cout << "id: " << int(dataCenter.m_teamGreen.robots[i].id);
-				std::cout << ",\t x: " << dataCenter.m_teamGreen.robots[i].x;
-				std::cout << ",\t y: " << dataCenter.m_teamGreen.robots[i].y;
-				std::cout << ",\t th: " << dataCenter.m_teamGreen.robots[i].theta;
+				std::cout << "id: " << int(dataCenter.m_teamB.robots[i].id);
+				std::cout << ",\t x: " << dataCenter.m_teamB.robots[i].x;
+				std::cout << ",\t y: " << dataCenter.m_teamB.robots[i].y;
+				std::cout << ",\t th: " << dataCenter.m_teamB.robots[i].theta;
 				std::cout << std::endl;
         	}
         }

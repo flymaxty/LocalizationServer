@@ -15,14 +15,14 @@
 class DataCenter
 {
 public:
-	RobotTeam m_teamRed;
-	RobotTeam m_teamGreen;
+	RobotTeam m_teamA;
+	RobotTeam m_teamB;
 
 	//Threshold
-	cv::Scalar m_teamRedMin;
-	cv::Scalar m_teamRedMax;
-	cv::Scalar m_teamGreenMin;
-	cv::Scalar m_teamGreenMax;
+	cv::Scalar m_teamAMin;
+	cv::Scalar m_teamAMax;
+	cv::Scalar m_teamBMin;
+	cv::Scalar m_teamBMax;
 	cv::Scalar m_teamNumb1Min;
 	cv::Scalar m_teamNumb1Max;
 	cv::Scalar m_teamNumb2Min;
@@ -40,6 +40,7 @@ public:
 	~DataCenter();
 
 	bool loadParam();
+	bool saveParam();
 private:
 };
 
