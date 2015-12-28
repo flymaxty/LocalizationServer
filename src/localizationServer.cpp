@@ -4,12 +4,14 @@
 
 #include "DataCenter.h"
 #include "ColorSegmentation.h"
+#include "TeamDetect.h"
 
 DataCenter dataCenter;
 ColorSegmentation redSegmentation;
 ColorSegmentation greenSegmentation;
 ColorSegmentation numb1Segmentation;
 ColorSegmentation numb2Segmentation;
+TeamDetect teamDetect;
 
 const std::string keys =
     "{help h    |   |print help}"
@@ -45,16 +47,49 @@ int main(int argc, char** argv)
 
     while(1)
     {
+    	std::cout << "================== Start ==================" << std::endl;
         rawImage.copyTo(dataCenter.m_rawImage);
+
         redSegmentation.getBlocks(rawImage, redPoints);
-        std::cout << "redPoints: " << redPoints.size() << std::endl;
         greenSegmentation.getBlocks(rawImage, greenPoints);
         numb1Segmentation.getBlocks(rawImage, numb1Points);
         numb2Segmentation.getBlocks(rawImage, numb2Points);
-        redSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 0, 255));
-        greenSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 0));
-        numb1Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(255, 255, 0));
-        numb2Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 255));
+
+        //redSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 0, 255));
+        //greenSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 0));
+        //numb1Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(255, 255, 0));
+        //numb2Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 255));
+
+        teamDetect.getTeam(redPoints, numb1Points, numb2Points, dataCenter.m_teamRed);
+        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 0, 255), dataCenter.m_teamRed);
+        teamDetect.getTeam(greenPoints, numb1Points, numb2Points, dataCenter.m_teamGreen);
+        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 255, 0), dataCenter.m_teamGreen);
+
+        std::cout << "> Red Team <" << std::endl;
+        for(int i=0; i<4; i++)
+        {
+        	if(dataCenter.m_teamRed.robots[i].online)
+        	{
+            	std::cout << "id: " << int(dataCenter.m_teamRed.robots[i].id);
+            	std::cout << ",\t x: " << dataCenter.m_teamRed.robots[i].x;
+            	std::cout << ",\t y: " << dataCenter.m_teamRed.robots[i].y;
+            	std::cout << ",\t th: " << dataCenter.m_teamRed.robots[i].theta;
+            	std::cout << std::endl;
+        	}
+        }
+        std::cout << "> Green Team <" << std::endl;
+        for(int i=0; i<4; i++)
+        {
+        	if(dataCenter.m_teamGreen.robots[i].online)
+        	{
+				std::cout << "id: " << int(dataCenter.m_teamGreen.robots[i].id);
+				std::cout << ",\t x: " << dataCenter.m_teamGreen.robots[i].x;
+				std::cout << ",\t y: " << dataCenter.m_teamGreen.robots[i].y;
+				std::cout << ",\t th: " << dataCenter.m_teamGreen.robots[i].theta;
+				std::cout << std::endl;
+        	}
+        }
+
         cv::imshow("Test", dataCenter.m_rawImage);
         cv::waitKey(1);
     }

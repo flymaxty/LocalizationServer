@@ -10,27 +10,13 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "RobotStruct.h"
+
 class DataCenter
 {
 public:
-	//Robot Struct
-	struct Robot
-	{
-		uint8_t id;
-		bool online;
-		double x;
-		double y;
-		float theta;
-	};
-
-	//Team Struct
-	struct Team
-	{
-		Robot robots[2];
-	};
-
-	Team m_teamRed;
-	Team m_teamGreen;
+	RobotTeam m_teamRed;
+	RobotTeam m_teamGreen;
 
 	//Threshold
 	cv::Scalar m_teamRedMin;

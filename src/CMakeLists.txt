@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 FIND_PACKAGE(OpenCV REQUIRED)
 
-ADD_EXECUTABLE(localizationServer localizationServer.cpp DataCenter.cpp ColorSegmentation.cpp)
+ADD_EXECUTABLE(localizationServer localizationServer.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp)
 TARGET_LINK_LIBRARIES(localizationServer ${OpenCV_LIBS})
 
 ADD_EXECUTABLE(capture capture.cpp)
