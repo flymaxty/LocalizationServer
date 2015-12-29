@@ -8,7 +8,7 @@
 #define IMAGE_WIDTH     512
 #define IMAGE_HEIGHT    384
 
-const std::string aboutString = "LocalizationServer v0.1.0";
+const std::string aboutString = "GetColor v0.1.0";
 const std::string paramKeys =
     "{help h    |   |Print help}"
     "{video     |   |Video index}";
@@ -17,6 +17,16 @@ void ValueCallback(int thres, void* in_data)
 {
     double* value = (double*)in_data;
     *value = double(thres);
+}
+
+void updateTrackbarPos(cv::Scalar minValue, cv::Scalar maxValue)
+{
+    cv::setTrackbarPos("yMinValue", "Config", minValue[0]);
+    cv::setTrackbarPos("yMaxValue", "Config", maxValue[0]);
+    cv::setTrackbarPos("uMinValue", "Config", minValue[1]);
+    cv::setTrackbarPos("uMaxValue", "Config", maxValue[1]);
+    cv::setTrackbarPos("vMinValue", "Config", minValue[2]);
+    cv::setTrackbarPos("vMaxValue", "Config", maxValue[2]);
 }
 
 void onMouse(int event, int x, int y, int flags, void* in_data)
@@ -57,39 +67,33 @@ void helpMessage(cv::CommandLineParser& in_parser)
 int main(int argc, char** argv)
 {
     DataCenter dataCenter;
-    //dataCenter.loadParam();
+    dataCenter.loadParam();
+
     ColorSegmentation colorSegmentation;
-
-    cv::Mat rawImage, smallImage;
-    cv::Size imageSize(IMAGE_WIDTH, IMAGE_HEIGHT);
-
-    int button;
-    std::vector<cv::Point2d> points;
-
-    cv::Scalar minValue, maxValue;
-    cv::Scalar *pMinValue, *pMaxValue;
-
-    std::string text;
-
-    bool running;
 
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
 
-    uint8_t videoIndex = parser.get<uint8_t>("video");
+    int videoIndex = parser.get<int>("video");
     cv::VideoCapture camera(videoIndex);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
+    cv::Mat rawImage;
     camera >> rawImage;
 
-    cv::namedWindow("BigImage");
+    cv::Mat smallImage;
+    cv::namedWindow("BigImage", cv::WINDOW_FULLSCREEN);
     cv::setMouseCallback("BigImage", onMouse, (void*)(&smallImage));
 
+    cv::Scalar minValue, maxValue;
+    cv::Size imageSize(IMAGE_WIDTH, IMAGE_HEIGHT);
     cv::Mat bigImage(imageSize.height*2+30, imageSize.width*2+30, rawImage.type());
     cv::Rect topLeftRect(cv::Point(10, 10), imageSize);
     cv::Rect topRightRect(cv::Point(10+imageSize.width+10, 10), imageSize);
     cv::Rect bottomLeftRect(cv::Point(10, 10+imageSize.height+10), imageSize);
     cv::Rect bottomRightRect(cv::Point(10+imageSize.width+10, 10+imageSize.height+10), imageSize);
 
-    cv::namedWindow("Config", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Config", cv::WINDOW_KEEPRATIO);
     cv::createTrackbar("yMinValue", "Config", NULL,
                         255, ValueCallback, (void*)(&minValue.val[0]));
     cv::createTrackbar("yMaxValue", "Config", NULL,
@@ -103,7 +107,14 @@ int main(int argc, char** argv)
     cv::createTrackbar("vMaxValue", "Config", NULL,
                         255, ValueCallback, (void*)(&maxValue.val[2]));
 
-    running = true;
+    std::string text = "Team A";
+    cv::Scalar *pMinValue = &dataCenter.m_teamAMin;
+    cv::Scalar *pMaxValue = &dataCenter.m_teamAMax;
+	updateTrackbarPos(*pMinValue, *pMaxValue);
+
+    int button;
+    bool running = true;
+    std::vector<cv::Point2d> points;
     while(running)
     {
         camera >> rawImage;
@@ -111,8 +122,8 @@ int main(int argc, char** argv)
         smallImage.copyTo(bigImage(topLeftRect));
         smallImage.copyTo(bigImage(bottomLeftRect));
 
-        pMinValue = &minValue;
-        pMaxValue = &maxValue;
+        *pMinValue = minValue;
+        *pMaxValue = maxValue;
         colorSegmentation.setThreshold(*pMinValue, *pMaxValue);
         colorSegmentation.getBlocks(bigImage(topLeftRect), points);
         colorSegmentation.drawPoints(bigImage(bottomLeftRect), cv::Scalar(0, 255, 255));
@@ -120,33 +131,41 @@ int main(int argc, char** argv)
         cv::cvtColor(colorSegmentation.m_thresholdImage, bigImage(topRightRect), cv::COLOR_GRAY2BGR);
         cv::cvtColor(colorSegmentation.m_filterImage, bigImage(bottomRightRect), cv::COLOR_GRAY2BGR);
 
+        cv::putText(bigImage(topLeftRect), text, cv::Point(10, IMAGE_HEIGHT-10), cv::FONT_HERSHEY_DUPLEX, 1,
+        		cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+
         cv::imshow("BigImage", bigImage);
         button = cv::waitKey(10);
+        //std::cout << button << std::endl;
         switch(button)
         {
-            case 49:
-                text = "Team A";
-                pMinValue = &dataCenter.m_teamAMin;
-                pMaxValue = &dataCenter.m_teamAMax;
-                break;
-            case 50:
-                text = "Team B";
-                pMinValue = &dataCenter.m_teamBMin;
-                pMaxValue = &dataCenter.m_teamBMax;
-                break;
-            case 51:
-                text = "Number One";
-                pMinValue = &dataCenter.m_teamNumb1Min;
-                pMaxValue = &dataCenter.m_teamNumb1Max;
-                break;
-            case 52:
-                text = "Number Two";
-                pMinValue = &dataCenter.m_teamNumb1Min;
-                pMaxValue = &dataCenter.m_teamNumb2Max;
-                break;
-            case 113:
-            case 10:
-                running = false;
+			case 49:
+				text = "Team A";
+				pMinValue = &dataCenter.m_teamAMin;
+				pMaxValue = &dataCenter.m_teamAMax;
+				updateTrackbarPos(*pMinValue, *pMaxValue);
+				break;
+			case 50:
+				text = "Team B";
+				pMinValue = &dataCenter.m_teamBMin;
+				pMaxValue = &dataCenter.m_teamBMax;
+				updateTrackbarPos(*pMinValue, *pMaxValue);
+				break;
+			case 51:
+				text = "Number One";
+				pMinValue = &dataCenter.m_teamNumb1Min;
+				pMaxValue = &dataCenter.m_teamNumb1Max;
+				updateTrackbarPos(*pMinValue, *pMaxValue);
+				break;
+			case 52:
+				text = "Number Two";
+				pMinValue = &dataCenter.m_teamNumb2Min;
+				pMaxValue = &dataCenter.m_teamNumb2Max;
+				updateTrackbarPos(*pMinValue, *pMaxValue);
+			break;
+			case 113:
+			case 10:
+				running = false;
         }
     }
 

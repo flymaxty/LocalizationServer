@@ -23,6 +23,7 @@ bool DataCenter::loadParam()
 {
 	m_thresholdFile = cv::FileStorage(s_thresholdFileName, cv::FileStorage::READ);
 
+	//m_thresholdFile
 	m_thresholdFile["TeamAMin"] >> m_teamAMin;
 	m_thresholdFile["TeamAMax"] >> m_teamAMax;
 	m_thresholdFile["TeamBMin"] >> m_teamBMin;
