@@ -110,7 +110,7 @@ int main(int argc, char** argv)
     std::string text = "Team A";
     cv::Scalar *pMinValue = &dataCenter.m_teamAMin;
     cv::Scalar *pMaxValue = &dataCenter.m_teamAMax;
-	updateTrackbarPos(*pMinValue, *pMaxValue);
+    updateTrackbarPos(*pMinValue, *pMaxValue);
 
     int button;
     bool running = true;
@@ -132,40 +132,40 @@ int main(int argc, char** argv)
         cv::cvtColor(colorSegmentation.m_filterImage, bigImage(bottomRightRect), cv::COLOR_GRAY2BGR);
 
         cv::putText(bigImage(topLeftRect), text, cv::Point(10, IMAGE_HEIGHT-10), cv::FONT_HERSHEY_DUPLEX, 1,
-        		cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+                cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 
         cv::imshow("BigImage", bigImage);
         button = cv::waitKey(10);
         //std::cout << button << std::endl;
         switch(button)
         {
-			case 49:
-				text = "Team A";
-				pMinValue = &dataCenter.m_teamAMin;
-				pMaxValue = &dataCenter.m_teamAMax;
-				updateTrackbarPos(*pMinValue, *pMaxValue);
-				break;
-			case 50:
-				text = "Team B";
-				pMinValue = &dataCenter.m_teamBMin;
-				pMaxValue = &dataCenter.m_teamBMax;
-				updateTrackbarPos(*pMinValue, *pMaxValue);
-				break;
-			case 51:
-				text = "Number One";
-				pMinValue = &dataCenter.m_teamNumb1Min;
-				pMaxValue = &dataCenter.m_teamNumb1Max;
-				updateTrackbarPos(*pMinValue, *pMaxValue);
-				break;
-			case 52:
-				text = "Number Two";
-				pMinValue = &dataCenter.m_teamNumb2Min;
-				pMaxValue = &dataCenter.m_teamNumb2Max;
-				updateTrackbarPos(*pMinValue, *pMaxValue);
-			break;
-			case 113:
-			case 10:
-				running = false;
+            case 49:
+                text = "Team A";
+                pMinValue = &dataCenter.m_teamAMin;
+                pMaxValue = &dataCenter.m_teamAMax;
+                updateTrackbarPos(*pMinValue, *pMaxValue);
+                break;
+            case 50:
+                text = "Team B";
+                pMinValue = &dataCenter.m_teamBMin;
+                pMaxValue = &dataCenter.m_teamBMax;
+                updateTrackbarPos(*pMinValue, *pMaxValue);
+                break;
+            case 51:
+                text = "Number One";
+                pMinValue = &dataCenter.m_teamNumb1Min;
+                pMaxValue = &dataCenter.m_teamNumb1Max;
+                updateTrackbarPos(*pMinValue, *pMaxValue);
+                break;
+            case 52:
+                text = "Number Two";
+                pMinValue = &dataCenter.m_teamNumb2Min;
+                pMaxValue = &dataCenter.m_teamNumb2Max;
+                updateTrackbarPos(*pMinValue, *pMaxValue);
+            break;
+            case 113:
+            case 10:
+                running = false;
         }
     }
 

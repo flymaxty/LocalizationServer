@@ -15,32 +15,32 @@
 class DataCenter
 {
 public:
-	RobotTeam m_teamA;
-	RobotTeam m_teamB;
+    RobotTeam m_teamA;
+    RobotTeam m_teamB;
 
-	//Threshold
-	cv::Scalar m_teamAMin;
-	cv::Scalar m_teamAMax;
-	cv::Scalar m_teamBMin;
-	cv::Scalar m_teamBMax;
-	cv::Scalar m_teamNumb1Min;
-	cv::Scalar m_teamNumb1Max;
-	cv::Scalar m_teamNumb2Min;
-	cv::Scalar m_teamNumb2Max;
+    //Threshold
+    cv::Scalar m_teamAMin;
+    cv::Scalar m_teamAMax;
+    cv::Scalar m_teamBMin;
+    cv::Scalar m_teamBMax;
+    cv::Scalar m_teamNumb1Min;
+    cv::Scalar m_teamNumb1Max;
+    cv::Scalar m_teamNumb2Min;
+    cv::Scalar m_teamNumb2Max;
 
-	//Image
-	cv::Mat m_rawImage;
+    //Image
+    cv::Mat m_rawImage;
 
 private:
-	static const std::string s_thresholdFileName;		//
+    static const std::string s_thresholdFileName;       //
 
-	cv::FileStorage m_thresholdFile;					//
+    cv::FileStorage m_thresholdFile;                    //
 public:
-	DataCenter();
-	~DataCenter();
+    DataCenter();
+    ~DataCenter();
 
-	bool loadParam();
-	bool saveParam();
+    bool loadParam();
+    bool saveParam();
 private:
 };
 

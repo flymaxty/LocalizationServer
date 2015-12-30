@@ -12,24 +12,24 @@
 
 class ColorSegmentation {
 private:
-	cv::Scalar m_minValue;
-	cv::Scalar m_maxValue;
+    cv::Scalar m_minValue;
+    cv::Scalar m_maxValue;
 public:
-	cv::Mat m_yuvImage;
-	cv::Mat m_thresholdImage;
-	cv::Mat m_filterImage;
+    cv::Mat m_yuvImage;
+    cv::Mat m_thresholdImage;
+    cv::Mat m_filterImage;
 
-	std::vector<cv::Point2d> m_points;
-	std::vector<std::vector<cv::Point> > m_contours;
+    std::vector<cv::Point2d> m_points;
+    std::vector<std::vector<cv::Point> > m_contours;
 public:
-	ColorSegmentation();
-	~ColorSegmentation();
+    ColorSegmentation();
+    ~ColorSegmentation();
 
-	void drawPoints(cv::InputOutputArray in_image, cv::Scalar in_color);
-	void drawContours(cv::InputOutputArray in_image, cv::Scalar in_color);
+    void drawPoints(cv::InputOutputArray in_image, cv::Scalar in_color);
+    void drawContours(cv::InputOutputArray in_image, cv::Scalar in_color);
 
-	bool setThreshold(cv::Scalar minValue, cv::Scalar maxValue);
-	bool getBlocks(cv::InputArray in_image, std::vector<cv::Point2d>& in_points);
+    bool setThreshold(cv::Scalar minValue, cv::Scalar maxValue);
+    bool getBlocks(cv::InputArray in_image, std::vector<cv::Point2d>& in_points);
 };
 
 #endif /* SRC_COLORSEGMENTATION_H_ */

@@ -11,18 +11,18 @@
 //Robot Struct
 struct Robot
 {
-	uint8_t id;
-	bool online;
-	double x;
-	double y;
-	double theta;
+    uint8_t id;
+    bool online;
+    double x;
+    double y;
+    double theta;
 };
 
 //Team Struct
 struct RobotTeam
 {
-	uint8_t onlineNumbuer;
-	Robot robots[4];
+    uint8_t onlineNumbuer;
+    Robot robots[4];
 };
 
 #endif /* SRC_ROBOTSTRUCT_H_ */

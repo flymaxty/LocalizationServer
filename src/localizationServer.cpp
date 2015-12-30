@@ -47,8 +47,8 @@ int main(int argc, char** argv)
     int timeout = 20;
     while(timeout)
     {
-    	camera >> rawImage;
-    	timeout--;
+        camera >> rawImage;
+        timeout--;
     }
 
     std::vector<cv::Point2d> redPoints;
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 
     while(1)
     {
-    	std::cout << "================== Start ==================" << std::endl;
+        std::cout << "================== Start ==================" << std::endl;
         camera >> rawImage;
         rawImage.copyTo(dataCenter.m_rawImage);
 
@@ -80,26 +80,26 @@ int main(int argc, char** argv)
         std::cout << "> Red Team <" << std::endl;
         for(int i=0; i<4; i++)
         {
-        	if(dataCenter.m_teamA.robots[i].online)
-        	{
-            	std::cout << "id: " << int(dataCenter.m_teamA.robots[i].id);
-            	std::cout << ",\t x: " << dataCenter.m_teamA.robots[i].x;
-            	std::cout << ",\t y: " << dataCenter.m_teamA.robots[i].y;
-            	std::cout << ",\t th: " << dataCenter.m_teamA.robots[i].theta;
-            	std::cout << std::endl;
-        	}
+            if(dataCenter.m_teamA.robots[i].online)
+            {
+                std::cout << "id: " << int(dataCenter.m_teamA.robots[i].id);
+                std::cout << ",\t x: " << dataCenter.m_teamA.robots[i].x;
+                std::cout << ",\t y: " << dataCenter.m_teamA.robots[i].y;
+                std::cout << ",\t th: " << dataCenter.m_teamA.robots[i].theta;
+                std::cout << std::endl;
+            }
         }
         std::cout << "> Green Team <" << std::endl;
         for(int i=0; i<4; i++)
         {
-        	if(dataCenter.m_teamB.robots[i].online)
-        	{
-				std::cout << "id: " << int(dataCenter.m_teamB.robots[i].id);
-				std::cout << ",\t x: " << dataCenter.m_teamB.robots[i].x;
-				std::cout << ",\t y: " << dataCenter.m_teamB.robots[i].y;
-				std::cout << ",\t th: " << dataCenter.m_teamB.robots[i].theta;
-				std::cout << std::endl;
-        	}
+            if(dataCenter.m_teamB.robots[i].online)
+            {
+                std::cout << "id: " << int(dataCenter.m_teamB.robots[i].id);
+                std::cout << ",\t x: " << dataCenter.m_teamB.robots[i].x;
+                std::cout << ",\t y: " << dataCenter.m_teamB.robots[i].y;
+                std::cout << ",\t th: " << dataCenter.m_teamB.robots[i].theta;
+                std::cout << std::endl;
+            }
         }
 
         cv::imshow("Test", dataCenter.m_rawImage);
