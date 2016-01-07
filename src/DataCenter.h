@@ -27,21 +27,30 @@ public:
     cv::Scalar m_teamNumb1Max;
     cv::Scalar m_teamNumb2Min;
     cv::Scalar m_teamNumb2Max;
+    cv::Scalar m_cartesianMin;
+    cv::Scalar m_cartesianMax;
+
+    //Camera
+    cv::Mat m_cameraMatrix;
+    cv::Mat m_distCoeffs;
 
     //Image
     cv::Mat m_rawImage;
 
-private:
-    static const std::string s_thresholdFileName;       //
-
-    cv::FileStorage m_thresholdFile;                    //
+public:
+    std::string m_thresholdFileName;
+    std::string m_cameraMatrixFileName;
 public:
     DataCenter();
     ~DataCenter();
 
-    bool loadParam();
-    bool saveParam();
-private:
+    bool loadAllParam();
+
+    bool loadThreshold();
+    bool saveThreshold();
+
+    bool loadCameraMatrix();
+    bool saveCameraMatrix();
 };
 
 #endif /* SRC_DATACENTER_H_ */

@@ -1,10 +1,12 @@
 #include <iostream>
+#include <sys/time.h>
 
 #include <opencv2/opencv.hpp>
 
 #include "DataCenter.h"
 #include "ColorSegmentation.h"
 #include "TeamDetect.h"
+#include "Image2World.h"
 
 DataCenter dataCenter;
 ColorSegmentation redSegmentation;
@@ -33,7 +35,7 @@ int main(int argc, char** argv)
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
 
-    dataCenter.loadParam();
+    dataCenter.loadAllParam();
     redSegmentation.setThreshold(dataCenter.m_teamAMin, dataCenter.m_teamAMax);
     greenSegmentation.setThreshold(dataCenter.m_teamBMin, dataCenter.m_teamBMax);
     numb1Segmentation.setThreshold(dataCenter.m_teamNumb1Min, dataCenter.m_teamNumb1Max);
@@ -43,7 +45,7 @@ int main(int argc, char** argv)
     cv::VideoCapture camera(videoIndex);
     camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
-    cv::Mat rawImage;
+    cv::Mat rawImage, undistorImage;
     int timeout = 20;
     while(timeout)
     {
@@ -56,11 +58,18 @@ int main(int argc, char** argv)
     std::vector<cv::Point2d> numb1Points;
     std::vector<cv::Point2d> numb2Points;
 
+    double timeUse;
+    struct timeval startTime, stopTime;
+
     while(1)
     {
         std::cout << "================== Start ==================" << std::endl;
+        gettimeofday(&startTime, NULL);
+
         camera >> rawImage;
         rawImage.copyTo(dataCenter.m_rawImage);
+
+        //cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
 
         redSegmentation.getBlocks(rawImage, redPoints);
         greenSegmentation.getBlocks(rawImage, greenPoints);
@@ -102,7 +111,12 @@ int main(int argc, char** argv)
             }
         }
 
+        gettimeofday(&stopTime, NULL);
+        timeUse = (stopTime.tv_sec - startTime.tv_sec)*1000000.0 + (stopTime.tv_usec - startTime.tv_usec);
+        std::cout << "FPS: " << 1000000.0 / timeUse << std::endl;
+
         cv::imshow("Test", dataCenter.m_rawImage);
+        //cv::imshow("undistort", undistorImage);
         cv::waitKey(1);
     }
 

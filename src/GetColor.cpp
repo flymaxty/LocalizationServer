@@ -67,7 +67,7 @@ void helpMessage(cv::CommandLineParser& in_parser)
 int main(int argc, char** argv)
 {
     DataCenter dataCenter;
-    dataCenter.loadParam();
+    dataCenter.loadThreshold();
 
     ColorSegmentation colorSegmentation;
 
@@ -136,7 +136,6 @@ int main(int argc, char** argv)
 
         cv::imshow("BigImage", bigImage);
         button = cv::waitKey(10);
-        //std::cout << button << std::endl;
         switch(button)
         {
             case 49:
@@ -162,6 +161,12 @@ int main(int argc, char** argv)
                 pMinValue = &dataCenter.m_teamNumb2Min;
                 pMaxValue = &dataCenter.m_teamNumb2Max;
                 updateTrackbarPos(*pMinValue, *pMaxValue);
+                break;
+            case 53:
+                text = "Cartesian";
+                pMinValue = &dataCenter.m_cartesianMin;
+                pMaxValue = &dataCenter.m_cartesianMax;
+                updateTrackbarPos(*pMinValue, *pMaxValue);
             break;
             case 113:
             case 10:
@@ -169,7 +174,7 @@ int main(int argc, char** argv)
         }
     }
 
-    dataCenter.saveParam();
+    dataCenter.saveThreshold();
 
     return 0;
 }

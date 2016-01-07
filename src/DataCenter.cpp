@@ -7,11 +7,10 @@
 
 #include "DataCenter.h"
 
-const std::string DataCenter::s_thresholdFileName = "threshold.yaml";
-
 DataCenter::DataCenter()
 {
-
+	m_thresholdFileName = "Threshold.yaml";
+	m_cameraMatrixFileName = "CameraMatrix.yaml";
 }
 
 DataCenter::~DataCenter()
@@ -19,37 +18,57 @@ DataCenter::~DataCenter()
 
 }
 
-bool DataCenter::loadParam()
+bool DataCenter::loadAllParam()
 {
-    m_thresholdFile = cv::FileStorage(s_thresholdFileName, cv::FileStorage::READ);
+	loadThreshold();
+	loadCameraMatrix();
+}
 
-    //m_thresholdFile
-    m_thresholdFile["TeamAMin"] >> m_teamAMin;
-    m_thresholdFile["TeamAMax"] >> m_teamAMax;
-    m_thresholdFile["TeamBMin"] >> m_teamBMin;
-    m_thresholdFile["TeamBMax"] >> m_teamBMax;
-    m_thresholdFile["TeamNumb1Min"] >> m_teamNumb1Min;
-    m_thresholdFile["TeamNumb1Max"] >> m_teamNumb1Max;
-    m_thresholdFile["TeamNumb2Min"] >> m_teamNumb2Min;
-    m_thresholdFile["TeamNumb2Max"] >> m_teamNumb2Max;
+bool DataCenter::loadCameraMatrix()
+{
+	cv::FileStorage paramFile = cv::FileStorage(m_cameraMatrixFileName, cv::FileStorage::READ);
 
-    m_thresholdFile.release();
+	paramFile["camera_matrix"] >> m_cameraMatrix;
+	paramFile["distortion_coefficients"] >> m_distCoeffs;
+
+	paramFile.release();
+	return true;
+}
+
+bool DataCenter::loadThreshold()
+{
+    cv::FileStorage paramFile = cv::FileStorage(m_thresholdFileName, cv::FileStorage::READ);
+
+    paramFile["TeamAMin"] >> m_teamAMin;
+    paramFile["TeamAMax"] >> m_teamAMax;
+    paramFile["TeamBMin"] >> m_teamBMin;
+    paramFile["TeamBMax"] >> m_teamBMax;
+    paramFile["TeamNumb1Min"] >> m_teamNumb1Min;
+    paramFile["TeamNumb1Max"] >> m_teamNumb1Max;
+    paramFile["TeamNumb2Min"] >> m_teamNumb2Min;
+    paramFile["TeamNumb2Max"] >> m_teamNumb2Max;
+    paramFile["CartesianMin"] >> m_cartesianMin;
+    paramFile["CartesianMax"] >> m_cartesianMax;
+
+    paramFile.release();
     return true;
 }
 
-bool DataCenter::saveParam()
+bool DataCenter::saveThreshold()
 {
-    m_thresholdFile = cv::FileStorage(s_thresholdFileName, cv::FileStorage::WRITE);
+	cv::FileStorage paramFile = cv::FileStorage(m_thresholdFileName, cv::FileStorage::WRITE);
 
-    m_thresholdFile << "TeamAMin" << m_teamAMin;
-    m_thresholdFile << "TeamAMax" << m_teamAMax;
-    m_thresholdFile << "TeamBMin" << m_teamBMin;
-    m_thresholdFile << "TeamBMax" << m_teamBMax;
-    m_thresholdFile << "TeamNumb1Min" << m_teamNumb1Min;
-    m_thresholdFile << "TeamNumb1Max" << m_teamNumb1Max;
-    m_thresholdFile << "TeamNumb2Min" << m_teamNumb2Min;
-    m_thresholdFile << "TeamNumb2Max" << m_teamNumb2Max;
+	paramFile << "TeamAMin" << m_teamAMin;
+	paramFile << "TeamAMax" << m_teamAMax;
+	paramFile << "TeamBMin" << m_teamBMin;
+	paramFile << "TeamBMax" << m_teamBMax;
+	paramFile << "TeamNumb1Min" << m_teamNumb1Min;
+	paramFile << "TeamNumb1Max" << m_teamNumb1Max;
+	paramFile << "TeamNumb2Min" << m_teamNumb2Min;
+	paramFile << "TeamNumb2Max" << m_teamNumb2Max;
+	paramFile << "CartesianMin" << m_cartesianMin;
+	paramFile << "CartesianMax" << m_cartesianMax;
 
-    m_thresholdFile.release();
+	paramFile.release();
     return true;
 }
