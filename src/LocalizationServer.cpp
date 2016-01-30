@@ -43,6 +43,7 @@ int main(int argc, char** argv)
 
     int videoIndex = parser.get<int>("video");
     cv::VideoCapture camera(videoIndex);
+    cv::namedWindow("Test", cv::WINDOW_KEEPRATIO);
     camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
     cv::Mat rawImage, undistorImage;
@@ -67,19 +68,22 @@ int main(int argc, char** argv)
         gettimeofday(&startTime, NULL);
 
         camera >> rawImage;
-        rawImage.copyTo(dataCenter.m_rawImage);
+        //cv::resize(rawImage,rawImage,cv::Size(1366, 768));
+        cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
+        undistorImage.copyTo(dataCenter.m_rawImage);
+        //rawImage.copyTo(dataCenter.m_rawImage);
 
         //cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
 
-        redSegmentation.getBlocks(rawImage, redPoints);
-        greenSegmentation.getBlocks(rawImage, greenPoints);
-        numb1Segmentation.getBlocks(rawImage, numb1Points);
-        numb2Segmentation.getBlocks(rawImage, numb2Points);
+        redSegmentation.getBlocks(dataCenter.m_rawImage, redPoints);
+        greenSegmentation.getBlocks(dataCenter.m_rawImage, greenPoints);
+        numb1Segmentation.getBlocks(dataCenter.m_rawImage, numb1Points);
+        numb2Segmentation.getBlocks(dataCenter.m_rawImage, numb2Points);
 
-        /*redSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 0, 255));
+        redSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 0, 255));
         greenSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 0));
         numb1Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(255, 255, 0));
-        numb2Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 255));*/
+        numb2Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 255));
 
         teamDetect.getTeam(redPoints, numb1Points, numb2Points, dataCenter.m_teamA);
         teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);

@@ -37,9 +37,14 @@ public:
     //Image
     cv::Mat m_rawImage;
 
+    //Map
+    cv::Mat m_transMatrix;
+    std::vector<cv::Point2f> m_mapVertex;
+
 public:
     std::string m_thresholdFileName;
     std::string m_cameraMatrixFileName;
+    std::string m_matrixFileName;
 public:
     DataCenter();
     ~DataCenter();
@@ -51,6 +56,9 @@ public:
 
     bool loadCameraMatrix();
     bool saveCameraMatrix();
+
+    bool loadMatrix();
+    bool saveMatrix();
 };
 
 #endif /* SRC_DATACENTER_H_ */

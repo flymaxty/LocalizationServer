@@ -11,6 +11,7 @@ DataCenter::DataCenter()
 {
 	m_thresholdFileName = "Threshold.yaml";
 	m_cameraMatrixFileName = "CameraMatrix.yaml";
+	m_matrixFileName = "Matrix.yaml";
 }
 
 DataCenter::~DataCenter()
@@ -68,6 +69,28 @@ bool DataCenter::saveThreshold()
 	paramFile << "TeamNumb2Max" << m_teamNumb2Max;
 	paramFile << "CartesianMin" << m_cartesianMin;
 	paramFile << "CartesianMax" << m_cartesianMax;
+
+	paramFile.release();
+    return true;
+}
+
+bool DataCenter::loadMatrix()
+{
+    cv::FileStorage paramFile = cv::FileStorage(m_matrixFileName, cv::FileStorage::READ);
+
+    paramFile["mapVertex"] >> m_mapVertex;
+    paramFile["transMatrix"] >> m_transMatrix;
+
+    paramFile.release();
+    return true;
+}
+
+bool DataCenter::saveMatrix()
+{
+	cv::FileStorage paramFile = cv::FileStorage(m_matrixFileName, cv::FileStorage::WRITE);
+
+	paramFile << "mapVertex" << m_mapVertex;
+	paramFile << "transMatrix" << m_transMatrix;
 
 	paramFile.release();
     return true;

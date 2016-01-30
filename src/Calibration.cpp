@@ -423,8 +423,8 @@ int main( int argc, char** argv )
     else
     {
         capture.open(cameraId);
-        capture.set(cv::CAP_PROP_FRAME_WIDTH,1024);
-        capture.set(cv::CAP_PROP_FRAME_HEIGHT,768);
+        capture.set(cv::CAP_PROP_FRAME_WIDTH,1920);
+        capture.set(cv::CAP_PROP_FRAME_HEIGHT,1080);
     }
 
     if( !capture.isOpened() && imageList.empty() )
@@ -436,7 +436,7 @@ int main( int argc, char** argv )
     if( capture.isOpened() )
         printf( "%s", liveCaptureHelp );
 
-    namedWindow( "Image View", 1 );
+    namedWindow( "Image View", cv::WINDOW_KEEPRATIO );
 
     for(i = 0;;i++)
     {
