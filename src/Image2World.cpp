@@ -41,10 +41,17 @@ bool Image2World::changeCoordinate(std::vector<cv::Point2d>& in_pointsA,
 
 	in_pointsB.clear();
 
-	for(uint16_t i; i<in_pointsA.size(); i++)
+	/*for(uint16_t i; i<in_pointsA.size(); i++)
 	{
 		tempPoints.x = in_pointsA[i].x * wScale;
 		tempPoints.y = m_fieldHeight - in_pointsA[i].y * hScale;
+		in_pointsB.push_back(tempPoints);
+	}*/
+
+	for(uint16_t i; i<in_pointsA.size(); i++)
+	{
+		tempPoints.x = in_pointsA[i].x;
+		tempPoints.y = in_pointsA[i].y;
 		in_pointsB.push_back(tempPoints);
 	}
 

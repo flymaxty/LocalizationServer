@@ -3,6 +3,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "cJSON/cJSON.h"
+
 #include "DataCenter.h"
 #include "ColorSegmentation.h"
 #include "TeamDetect.h"
@@ -71,7 +73,8 @@ int main(int argc, char** argv)
     double timeUse;
     struct timeval startTime, stopTime;
 
-    cv::Rect rect(100, 100, 1340, 1140);
+    cJSON *root, *elem;
+
     while(1)
     {
         std::cout << "================== Start ==================" << std::endl;
@@ -90,19 +93,6 @@ int main(int argc, char** argv)
         greenSegmentation.drawPoints(realImage, cv::Scalar(0, 255, 0));
         numb1Segmentation.drawPoints(realImage, cv::Scalar(255, 255, 0));
         numb2Segmentation.drawPoints(realImage, cv::Scalar(0, 255, 255));
-
-/*      image2World.undistortPoints(redPoints, undistortRedPoints);
-        image2World.undistortPoints(greenPoints, undistortGreenPoints);
-        image2World.undistortPoints(numb1Points, undistortNumb1Points);
-        image2World.undistortPoints(numb2Points, undistortNumb2Points);
-
-        std::cout << redPoints << std::endl;
-
-        image2World.perspectiveTransform(undistortRedPoints, realRedPoints);
-        image2World.perspectiveTransform(undistortGreenPoints, realGreenPoints);
-        image2World.perspectiveTransform(undistortNumb1Points, realNumb1Points);
-        image2World.perspectiveTransform(undistortNumb2Points, realNumb2Points);
-*/
 
 		image2World.convert2Field(redPoints, realRedPoints);
 		image2World.convert2Field(greenPoints, realGreenPoints);
@@ -144,6 +134,41 @@ int main(int argc, char** argv)
                 std::cout << std::endl;
             }
         }
+
+        root = cJSON_CreateArray();
+        for(int i=0; i<4; i++)
+        {
+            if(dataCenter.m_teamB.robots[i].online)
+            {
+            	cJSON_AddItemToArray(root, elem = cJSON_CreateObject());
+        		cJSON_AddNumberToObject(elem, "id", dataCenter.m_teamB.robots[i].id);
+        		cJSON_AddNumberToObject(elem, "x", dataCenter.m_teamB.robots[i].x);
+        		cJSON_AddNumberToObject(elem, "y", dataCenter.m_teamB.robots[i].y);
+        		cJSON_AddNumberToObject(elem, "theta", dataCenter.m_teamB.robots[i].theta);
+            }
+        }
+
+        //cJSON_Delete(elem);
+        //std::cout << "lalla" << std::endl;
+
+        for(int i=0; i<4; i++)
+        {
+            if(dataCenter.m_teamA.robots[i].online)
+            {
+            	cJSON_AddItemToArray(root, elem = cJSON_CreateObject());
+        		cJSON_AddNumberToObject(elem, "id", dataCenter.m_teamA.robots[i].id+4);
+        		cJSON_AddNumberToObject(elem, "x", dataCenter.m_teamA.robots[i].x);
+        		cJSON_AddNumberToObject(elem, "y", dataCenter.m_teamA.robots[i].y);
+        		cJSON_AddNumberToObject(elem, "theta", dataCenter.m_teamA.robots[i].theta);
+            }
+        }
+
+        char* buffer = cJSON_Print(root);
+        std::string bufferS(buffer);
+
+        std::cout << bufferS << std::endl;
+
+        cJSON_Delete(root);
 
         gettimeofday(&stopTime, NULL);
         timeUse = (stopTime.tv_sec - startTime.tv_sec)*1000000.0 + (stopTime.tv_usec - startTime.tv_usec);

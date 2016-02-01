@@ -118,10 +118,15 @@ int main(int argc, char** argv)
     }
 
     std::vector<cv::Point2d> mapVertex;
+    //mapVertex.push_back(cv::Point2d(0, 0));
+    //mapVertex.push_back(cv::Point2d(0, 1140));
+    //mapVertex.push_back(cv::Point2d(1340, 1140));
+    //mapVertex.push_back(cv::Point2d(1340, 0));
+
+    mapVertex.push_back(cv::Point2d(0, 0.575));
     mapVertex.push_back(cv::Point2d(0, 0));
-    mapVertex.push_back(cv::Point2d(0, 1140));
-    mapVertex.push_back(cv::Point2d(1340, 1140));
-    mapVertex.push_back(cv::Point2d(1340, 0));
+    mapVertex.push_back(cv::Point2d(0.673, 0));
+    mapVertex.push_back(cv::Point2d(0.673, 0.575));
 
     Image2World image2World;
     image2World.getTransMat(vertex, mapVertex, dataCenter.m_transMatrix);
