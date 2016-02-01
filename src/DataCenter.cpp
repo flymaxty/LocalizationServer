@@ -13,8 +13,11 @@ DataCenter::DataCenter()
 	m_cameraMatrixFileName = "CameraMatrix.yaml";
 	m_matrixFileName = "Matrix.yaml";
 
-    m_fieldWidth = 0.67;
-    m_fieldHeight = 0.57;
+    m_fieldWidth = 0.673;
+    m_fieldHeight = 0.575;
+
+    m_imageWidth = 1340;
+    m_imageHeight = 1140;
 
     m_robotRadius = 0.15;
 }

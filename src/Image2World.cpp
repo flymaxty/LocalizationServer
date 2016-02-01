@@ -16,21 +16,47 @@ Image2World::~Image2World() {
 	// TODO Auto-generated destructor stub
 }
 
-/*bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
+bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
 		std::vector<cv::Point2d>& in_pointsB)
 {
-	std::vector<cv::Point2d> undistortPoints
-	undistortPoints(in_pointsA, in_pointsB);
-	perspectiveTransform()
+	in_pointsB.clear();
+	if(in_pointsA.size() == 0)
+	{
+		return true;
+	}
+
+	std::vector<cv::Point2d> undistortPointsB, mirrorFieldPoints;
+	undistortPoints(in_pointsA, undistortPointsB);
+	perspectiveTransform(undistortPointsB, mirrorFieldPoints);
+	changeCoordinate(mirrorFieldPoints, in_pointsB);
 	return true;
-}*/
+}
+
+bool Image2World::changeCoordinate(std::vector<cv::Point2d>& in_pointsA,
+		std::vector<cv::Point2d>& in_pointsB)
+{
+	cv::Point2d tempPoints;
+	double wScale = m_fieldWidth / m_imageWidth;
+	double hScale = m_fieldHeight / m_imageHeight;
+
+	in_pointsB.clear();
+
+	for(uint16_t i; i<in_pointsA.size(); i++)
+	{
+		tempPoints.x = in_pointsA[i].x * wScale;
+		tempPoints.y = m_fieldHeight - in_pointsA[i].y * hScale;
+		in_pointsB.push_back(tempPoints);
+	}
+
+	return true;
+}
 
 bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
 		std::vector<cv::Point2d>& in_pointsB)
 {
+	in_pointsB.clear();
 	if(in_pointsA.size() == 0)
 	{
-		in_pointsB.clear();
 		return true;
 	}
 
@@ -69,10 +95,10 @@ bool Image2World::getTransMat(cv::InputArray in_pointsA,
 bool Image2World::perspectiveTransform(cv::InputArray in_pointsA,
 		cv::InputOutputArray in_pointsB)
 {
-	//in_pointsA.empty()
+	in_pointsB.clear();
+
 	if(in_pointsA.empty())
 	{
-		in_pointsB.clear();
 		return true;
 	}
 

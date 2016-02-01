@@ -45,6 +45,10 @@ int main(int argc, char** argv)
     image2World.m_cameraMatrix = dataCenter.m_cameraMatrix;
     image2World.m_distCoeffs = dataCenter.m_distCoeffs;
     image2World.m_transMat = dataCenter.m_transMatrix;
+    image2World.m_fieldHeight = dataCenter.m_fieldHeight;
+    image2World.m_fieldWidth = dataCenter.m_fieldWidth;
+    image2World.m_imageHeight = dataCenter.m_imageHeight;
+    image2World.m_imageWidth = dataCenter.m_imageWidth;
 
     int videoIndex = parser.get<int>("video");
     cv::VideoCapture camera(videoIndex);
@@ -87,7 +91,7 @@ int main(int argc, char** argv)
         numb1Segmentation.drawPoints(realImage, cv::Scalar(255, 255, 0));
         numb2Segmentation.drawPoints(realImage, cv::Scalar(0, 255, 255));
 
-        image2World.undistortPoints(redPoints, undistortRedPoints);
+/*      image2World.undistortPoints(redPoints, undistortRedPoints);
         image2World.undistortPoints(greenPoints, undistortGreenPoints);
         image2World.undistortPoints(numb1Points, undistortNumb1Points);
         image2World.undistortPoints(numb2Points, undistortNumb2Points);
@@ -98,16 +102,21 @@ int main(int argc, char** argv)
         image2World.perspectiveTransform(undistortGreenPoints, realGreenPoints);
         image2World.perspectiveTransform(undistortNumb1Points, realNumb1Points);
         image2World.perspectiveTransform(undistortNumb2Points, realNumb2Points);
+*/
+
+		image2World.convert2Field(redPoints, realRedPoints);
+		image2World.convert2Field(greenPoints, realGreenPoints);
+		image2World.convert2Field(numb1Points, realNumb1Points);
+		image2World.convert2Field(numb2Points, realNumb2Points);
 
         teamDetect.getTeam(realRedPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamA);
-        teamDetect.drawTeam(fieldImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
+        //teamDetect.drawTeam(fieldImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
         teamDetect.getTeam(realGreenPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamB);
-        teamDetect.drawTeam(fieldImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
+        //teamDetect.drawTeam(fieldImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
 
         for(int i=0; i<undistortRedPoints.size(); i++)
         {
         	std::cout << "Raw: " << redPoints[i] << std::endl;
-        	std::cout << "Und: " << undistortRedPoints[i] << std::endl;
         	std::cout << "Rel: " << realRedPoints[i] << std::endl;
         }
 

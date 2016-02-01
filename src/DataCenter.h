@@ -38,6 +38,10 @@ public:
     cv::Mat m_transMatrix;
     std::vector<cv::Point2d> m_mapVertex;
 
+    //Image
+    uint16_t m_imageWidth;
+    uint16_t m_imageHeight;
+
     //Filed(Meter)
     double m_fieldWidth;
     double m_fieldHeight;

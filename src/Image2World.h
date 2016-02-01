@@ -15,6 +15,15 @@ public:
 	cv::Mat m_cameraMatrix;
 	cv::Mat m_distCoeffs;
 	cv::Mat m_transMat;
+
+    //Filed(Meter)
+    double m_fieldWidth;
+    double m_fieldHeight;
+
+    //Image
+    uint16_t m_imageWidth;
+    uint16_t m_imageHeight;
+
 public:
 	Image2World();
 	~Image2World();
@@ -26,6 +35,8 @@ public:
 	bool perspectiveTransform(cv::InputArray in_pointsA,
 			cv::InputOutputArray in_pointsB);
 	bool convert2Field(std::vector<cv::Point2d>& in_pointsA,
+			std::vector<cv::Point2d>& in_pointsB);
+	bool changeCoordinate(std::vector<cv::Point2d>& in_pointsA,
 			std::vector<cv::Point2d>& in_pointsB);
 };
 
