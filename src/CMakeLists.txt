@@ -5,7 +5,7 @@ FIND_PACKAGE(OpenCV REQUIRED)
 ADD_EXECUTABLE(LocalizationServer LocalizationServer.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp Image2World.cpp)
 TARGET_LINK_LIBRARIES(LocalizationServer ${OpenCV_LIBS})
 
-ADD_EXECUTABLE(GetField GetField.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp)
+ADD_EXECUTABLE(GetField GetField.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp Image2World.cpp)
 TARGET_LINK_LIBRARIES(GetField ${OpenCV_LIBS})
 
 ADD_EXECUTABLE(GetColor GetColor.cpp ColorSegmentation.cpp DataCenter.cpp)

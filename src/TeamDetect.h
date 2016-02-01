@@ -32,7 +32,7 @@ public:
     uint16_t getNearestPoint(cv::Point2d in_point, std::vector<cv::Point2d> in_points, int16_t in_maskId=-1);
     Robot getTeamMember(cv::Point2d in_teamPoint, std::vector<cv::Point2d>& in_numbPoints,
             uint16_t in_numb1End);
-    bool drawTeam(cv::Mat& in_image, cv::Scalar in_scalar, RobotTeam& in_team);
+    bool drawTeam(cv::InputOutputArray in_image, cv::Scalar in_scalar, RobotTeam& in_team);
 };
 
 #endif /* SRC_TEAMDETECT_H_ */

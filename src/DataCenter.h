@@ -34,12 +34,16 @@ public:
     cv::Mat m_cameraMatrix;
     cv::Mat m_distCoeffs;
 
-    //Image
-    cv::Mat m_rawImage;
-
     //Map
     cv::Mat m_transMatrix;
-    std::vector<cv::Point2f> m_mapVertex;
+    std::vector<cv::Point2d> m_mapVertex;
+
+    //Filed(Meter)
+    double m_fieldWidth;
+    double m_fieldHeight;
+
+    //Robot(Meter)
+    double m_robotRadius;
 
 public:
     std::string m_thresholdFileName;

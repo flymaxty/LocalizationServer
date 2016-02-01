@@ -112,8 +112,9 @@ bool TeamDetect::getTeam(std::vector<cv::Point2d>& in_teamPoints, std::vector<cv
     return true;
 }
 
-bool TeamDetect::drawTeam(cv::Mat& in_image, cv::Scalar in_scalar, RobotTeam& in_team)
+bool TeamDetect::drawTeam(cv::InputOutputArray in_image, cv::Scalar in_scalar, RobotTeam& in_team)
 {
+	cv::Mat image = in_image.getMat();
     double radius = 20;
     int thickness = 1;
 
@@ -121,14 +122,14 @@ bool TeamDetect::drawTeam(cv::Mat& in_image, cv::Scalar in_scalar, RobotTeam& in
     {
         if(in_team.robots[i].online)
         {
-            cv::circle(in_image, cv::Point2d(in_team.robots[i].x, in_team.robots[i].y),
+            cv::circle(image, cv::Point2d(in_team.robots[i].x, in_team.robots[i].y),
                     radius, in_scalar, thickness, cv::LINE_AA);
-            cv::line(in_image, cv::Point2d(in_team.robots[i].x, in_team.robots[i].y),
+            cv::line(image, cv::Point2d(in_team.robots[i].x, in_team.robots[i].y),
                     cv::Point2d(in_team.robots[i].x+cos(in_team.robots[i].theta)*radius, in_team.robots[i].y+sin(in_team.robots[i].theta)*radius),
                     in_scalar, thickness, cv::LINE_AA);
             std::stringstream ss;
             ss << int(in_team.robots[i].id);
-            cv::putText(in_image, ss.str(), cv::Point2d(in_team.robots[i].x-30, in_team.robots[i].y-30),
+            cv::putText(image, ss.str(), cv::Point2d(in_team.robots[i].x-30, in_team.robots[i].y-30),
                     cv::FONT_HERSHEY_DUPLEX, 0.8, in_scalar, 1, cv::LINE_AA);
         }
     }

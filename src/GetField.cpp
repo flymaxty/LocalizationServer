@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "DataCenter.h"
+#include "Image2World.h"
 #include "ColorSegmentation.h"
 
 const std::string aboutString = "GetColor v0.1.0";
@@ -29,7 +30,7 @@ void onMouse(int event, int x, int y, int, void* in_data)
 	tmpPoint->y = y;
 }
 
-void getNearest(cv::Point2d in_pointA, std::vector<cv::Point2d>& in_points, cv::Point2f* in_pointB)
+void getNearest(cv::Point2d in_pointA, std::vector<cv::Point2d>& in_points, cv::Point2d* in_pointB)
 {
 	double tmp, distance = 9999;
 	int number;
@@ -72,7 +73,7 @@ int main(int argc, char** argv)
 
     int button;
     bool running = true;
-    std::vector<cv::Point2f> vertex(4);
+    std::vector<cv::Point2d> vertex(4);
     while(running)
     {
     	camera >> rawImage;
@@ -116,14 +117,34 @@ int main(int argc, char** argv)
     	cv::imshow("GetField", undistorImage);
     }
 
-    std::vector<cv::Point2f> mapVertex;
-    mapVertex.push_back(cv::Point2f(0, 0));
-    mapVertex.push_back(cv::Point2f(0, 1140));
-    mapVertex.push_back(cv::Point2f(1340, 1140));
-    mapVertex.push_back(cv::Point2f(1340, 0));
-    dataCenter.m_transMatrix = cv::getPerspectiveTransform(vertex, mapVertex);
+    std::vector<cv::Point2d> mapVertex;
+    mapVertex.push_back(cv::Point2d(0, 0));
+    mapVertex.push_back(cv::Point2d(0, 1140));
+    mapVertex.push_back(cv::Point2d(1340, 1140));
+    mapVertex.push_back(cv::Point2d(1340, 0));
+
+    Image2World image2World;
+    image2World.getTransMat(vertex, mapVertex, dataCenter.m_transMatrix);
     dataCenter.m_mapVertex = vertex;
     dataCenter.saveMatrix();
+
+    cv::Mat finalImage;
+    cv::namedWindow("final", cv::WINDOW_KEEPRATIO);
+    undistorImage.copyTo(finalImage);
+    running = true;
+    while(running)
+    {
+    	camera >> rawImage;
+    	cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
+    	cv::warpPerspective(undistorImage, finalImage, dataCenter.m_transMatrix, cv::Size(1340, 1140));
+
+    	cv::imshow("final", finalImage);
+    	button = cv::waitKey(1);
+    	if(button == 113 || button == 10)
+    	{
+    		running = false;
+    	}
+    }
 
     return 0;
 }

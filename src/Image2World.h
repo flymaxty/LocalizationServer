@@ -21,10 +21,12 @@ public:
 
 	bool undistortPoints(std::vector<cv::Point2d>& in_pointsA,
 			std::vector<cv::Point2d>& in_pointsB);
-	bool getTransMat(std::vector<cv::Point2d>& in_pointsA,
-			std::vector<cv::Point2d>& in_pointsB, cv::InputOutputArray in_mat);
-	bool perspectiveTransform(std::vector<cv::Point2d>& in_pointsA,
-			std::vector<cv::Point2d>& in_pointsB, cv::InputArray in_mat);
+	bool getTransMat(cv::InputArray in_pointsA,
+			cv::InputOutputArray in_pointsB, cv::InputOutputArray in_mat);
+	bool perspectiveTransform(cv::InputArray in_pointsA,
+			cv::InputOutputArray in_pointsB);
+	bool convert2Field(std::vector<cv::Point2d>& in_pointsA,
+			std::vector<cv::Point2d>& in_pointsB);
 };
 
 #endif /* SRC_IMAGE2WORLD_H_ */

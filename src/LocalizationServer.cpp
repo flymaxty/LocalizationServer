@@ -8,13 +8,6 @@
 #include "TeamDetect.h"
 #include "Image2World.h"
 
-DataCenter dataCenter;
-ColorSegmentation redSegmentation;
-ColorSegmentation greenSegmentation;
-ColorSegmentation numb1Segmentation;
-ColorSegmentation numb2Segmentation;
-TeamDetect teamDetect;
-
 const std::string aboutString = "LocalizationServer v0.1.0";
 const std::string paramKeys =
     "{help h    |   |Print help}"
@@ -35,60 +28,88 @@ int main(int argc, char** argv)
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
 
+    DataCenter dataCenter;
+    ColorSegmentation redSegmentation;
+    ColorSegmentation greenSegmentation;
+    ColorSegmentation numb1Segmentation;
+    ColorSegmentation numb2Segmentation;
+    TeamDetect teamDetect;
+
     dataCenter.loadAllParam();
     redSegmentation.setThreshold(dataCenter.m_teamAMin, dataCenter.m_teamAMax);
     greenSegmentation.setThreshold(dataCenter.m_teamBMin, dataCenter.m_teamBMax);
     numb1Segmentation.setThreshold(dataCenter.m_teamNumb1Min, dataCenter.m_teamNumb1Max);
     numb2Segmentation.setThreshold(dataCenter.m_teamNumb2Min, dataCenter.m_teamNumb2Max);
 
+    Image2World image2World;
+    image2World.m_cameraMatrix = dataCenter.m_cameraMatrix;
+    image2World.m_distCoeffs = dataCenter.m_distCoeffs;
+    image2World.m_transMat = dataCenter.m_transMatrix;
+
     int videoIndex = parser.get<int>("video");
     cv::VideoCapture camera(videoIndex);
-    cv::namedWindow("Test", cv::WINDOW_KEEPRATIO);
     camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
-    cv::Mat rawImage, undistorImage;
-    int timeout = 20;
-    while(timeout)
+    for(int timeout=20; timeout > 0; timeout--)
     {
-        camera >> rawImage;
-        timeout--;
+        camera.grab();
     }
 
-    std::vector<cv::Point2d> redPoints;
-    std::vector<cv::Point2d> greenPoints;
-    std::vector<cv::Point2d> numb1Points;
-    std::vector<cv::Point2d> numb2Points;
+    cv::namedWindow("final", cv::WINDOW_KEEPRATIO);
+    cv::Mat rawImage, realImage, fieldImage;
+    fieldImage = cv::Mat::zeros(cv::Size(1540, 1340), CV_64FC3);
+
+    std::vector<cv::Point2d> redPoints, undistortRedPoints, realRedPoints;
+    std::vector<cv::Point2d> greenPoints, undistortGreenPoints, realGreenPoints;
+    std::vector<cv::Point2d> numb1Points, undistortNumb1Points, realNumb1Points;
+    std::vector<cv::Point2d> numb2Points, undistortNumb2Points, realNumb2Points;
 
     double timeUse;
     struct timeval startTime, stopTime;
 
+    cv::Rect rect(100, 100, 1340, 1140);
     while(1)
     {
         std::cout << "================== Start ==================" << std::endl;
         gettimeofday(&startTime, NULL);
 
         camera >> rawImage;
-        //cv::resize(rawImage,rawImage,cv::Size(1366, 768));
-        cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
-        undistorImage.copyTo(dataCenter.m_rawImage);
-        //rawImage.copyTo(dataCenter.m_rawImage);
+        rawImage.copyTo(realImage);
+        fieldImage.setTo(0);
 
-        //cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
+        redSegmentation.getBlocks(rawImage, redPoints);
+        greenSegmentation.getBlocks(rawImage, greenPoints);
+        numb1Segmentation.getBlocks(rawImage, numb1Points);
+        numb2Segmentation.getBlocks(rawImage, numb2Points);
 
-        redSegmentation.getBlocks(dataCenter.m_rawImage, redPoints);
-        greenSegmentation.getBlocks(dataCenter.m_rawImage, greenPoints);
-        numb1Segmentation.getBlocks(dataCenter.m_rawImage, numb1Points);
-        numb2Segmentation.getBlocks(dataCenter.m_rawImage, numb2Points);
+        redSegmentation.drawPoints(realImage, cv::Scalar(0, 0, 255));
+        greenSegmentation.drawPoints(realImage, cv::Scalar(0, 255, 0));
+        numb1Segmentation.drawPoints(realImage, cv::Scalar(255, 255, 0));
+        numb2Segmentation.drawPoints(realImage, cv::Scalar(0, 255, 255));
 
-        redSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 0, 255));
-        greenSegmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 0));
-        numb1Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(255, 255, 0));
-        numb2Segmentation.drawPoints(dataCenter.m_rawImage, cv::Scalar(0, 255, 255));
+        image2World.undistortPoints(redPoints, undistortRedPoints);
+        image2World.undistortPoints(greenPoints, undistortGreenPoints);
+        image2World.undistortPoints(numb1Points, undistortNumb1Points);
+        image2World.undistortPoints(numb2Points, undistortNumb2Points);
 
-        teamDetect.getTeam(redPoints, numb1Points, numb2Points, dataCenter.m_teamA);
-        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
-        teamDetect.getTeam(greenPoints, numb1Points, numb2Points, dataCenter.m_teamB);
-        teamDetect.drawTeam(dataCenter.m_rawImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
+        std::cout << redPoints << std::endl;
+
+        image2World.perspectiveTransform(undistortRedPoints, realRedPoints);
+        image2World.perspectiveTransform(undistortGreenPoints, realGreenPoints);
+        image2World.perspectiveTransform(undistortNumb1Points, realNumb1Points);
+        image2World.perspectiveTransform(undistortNumb2Points, realNumb2Points);
+
+        teamDetect.getTeam(realRedPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamA);
+        teamDetect.drawTeam(fieldImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
+        teamDetect.getTeam(realGreenPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamB);
+        teamDetect.drawTeam(fieldImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
+
+        for(int i=0; i<undistortRedPoints.size(); i++)
+        {
+        	std::cout << "Raw: " << redPoints[i] << std::endl;
+        	std::cout << "Und: " << undistortRedPoints[i] << std::endl;
+        	std::cout << "Rel: " << realRedPoints[i] << std::endl;
+        }
 
         std::cout << "> Red Team <" << std::endl;
         for(int i=0; i<4; i++)
@@ -119,8 +140,8 @@ int main(int argc, char** argv)
         timeUse = (stopTime.tv_sec - startTime.tv_sec)*1000000.0 + (stopTime.tv_usec - startTime.tv_usec);
         std::cout << "FPS: " << 1000000.0 / timeUse << std::endl;
 
-        cv::imshow("Test", dataCenter.m_rawImage);
-        //cv::imshow("undistort", undistorImage);
+        cv::imshow("Test", realImage);
+        cv::imshow("final", fieldImage);
         cv::waitKey(1);
     }
 

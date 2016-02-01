@@ -12,6 +12,11 @@ DataCenter::DataCenter()
 	m_thresholdFileName = "Threshold.yaml";
 	m_cameraMatrixFileName = "CameraMatrix.yaml";
 	m_matrixFileName = "Matrix.yaml";
+
+    m_fieldWidth = 0.67;
+    m_fieldHeight = 0.57;
+
+    m_robotRadius = 0.15;
 }
 
 DataCenter::~DataCenter()
@@ -23,6 +28,7 @@ bool DataCenter::loadAllParam()
 {
 	loadThreshold();
 	loadCameraMatrix();
+	loadMatrix();
 }
 
 bool DataCenter::loadCameraMatrix()
