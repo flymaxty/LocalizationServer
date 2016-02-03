@@ -174,9 +174,9 @@ int main(int argc, char** argv)
         timeUse = (stopTime.tv_sec - startTime.tv_sec)*1000000.0 + (stopTime.tv_usec - startTime.tv_usec);
         std::cout << "FPS: " << 1000000.0 / timeUse << std::endl;
 
-        cv::imshow("Test", realImage);
-        cv::imshow("final", fieldImage);
-        cv::waitKey(1);
+        //cv::imshow("Test", realImage);
+        //cv::imshow("final", fieldImage);
+        //cv::waitKey(1);
     }
 
     return 0;

@@ -13,3 +13,6 @@ TARGET_LINK_LIBRARIES(GetColor ${OpenCV_LIBS})
 
 ADD_EXECUTABLE(Calibration Calibration.cpp)
 TARGET_LINK_LIBRARIES(Calibration ${OpenCV_LIBS})
+
+ADD_EXECUTABLE(Broadcaster_test Broadcaster_test.cpp Broadcaster.cpp)
+TARGET_LINK_LIBRARIES(Broadcaster_test mosquittopp)
