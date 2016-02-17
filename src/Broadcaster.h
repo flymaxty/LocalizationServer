@@ -10,15 +10,20 @@
 
 #include <mosquittopp.h>
 
+#include "RobotStruct.h"
+
 class Broadcaster: public mosquittopp::mosquittopp
 {
 public:
-	const char* host;
-	const char* topic;
-	int port;
+	const char* m_host;
+	const char* m_topic;
+	int m_port;
 public:
 	Broadcaster(const char *in_id, const char *in_topic, const char * in_host, int in_port=1883);
-	~Broadcaster();
+	virtual ~Broadcaster();
+	bool connectServer();
+	void publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB);
+
 };
 
 #endif /* BROADCASTER_H_ */

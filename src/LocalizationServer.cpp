@@ -9,6 +9,7 @@
 #include "ColorSegmentation.h"
 #include "TeamDetect.h"
 #include "Image2World.h"
+#include "Broadcaster.h"
 
 const std::string aboutString = "LocalizationServer v0.1.0";
 const std::string paramKeys =
@@ -73,7 +74,8 @@ int main(int argc, char** argv)
     double timeUse;
     struct timeval startTime, stopTime;
 
-    cJSON *root, *elem;
+	Broadcaster bk("localization", "spider_viz", "127.0.0.1");
+	bk.connectServer();
 
     while(1)
     {
@@ -135,48 +137,15 @@ int main(int argc, char** argv)
             }
         }
 
-        root = cJSON_CreateArray();
-        for(int i=0; i<4; i++)
-        {
-            if(dataCenter.m_teamB.robots[i].online)
-            {
-            	cJSON_AddItemToArray(root, elem = cJSON_CreateObject());
-        		cJSON_AddNumberToObject(elem, "id", dataCenter.m_teamB.robots[i].id);
-        		cJSON_AddNumberToObject(elem, "x", dataCenter.m_teamB.robots[i].x);
-        		cJSON_AddNumberToObject(elem, "y", dataCenter.m_teamB.robots[i].y);
-        		cJSON_AddNumberToObject(elem, "theta", dataCenter.m_teamB.robots[i].theta);
-            }
-        }
-
-        //cJSON_Delete(elem);
-        //std::cout << "lalla" << std::endl;
-
-        for(int i=0; i<4; i++)
-        {
-            if(dataCenter.m_teamA.robots[i].online)
-            {
-            	cJSON_AddItemToArray(root, elem = cJSON_CreateObject());
-        		cJSON_AddNumberToObject(elem, "id", dataCenter.m_teamA.robots[i].id+4);
-        		cJSON_AddNumberToObject(elem, "x", dataCenter.m_teamA.robots[i].x);
-        		cJSON_AddNumberToObject(elem, "y", dataCenter.m_teamA.robots[i].y);
-        		cJSON_AddNumberToObject(elem, "theta", dataCenter.m_teamA.robots[i].theta);
-            }
-        }
-
-        char* buffer = cJSON_Print(root);
-        std::string bufferS(buffer);
-
-        std::cout << bufferS << std::endl;
-
-        cJSON_Delete(root);
-
         gettimeofday(&stopTime, NULL);
         timeUse = (stopTime.tv_sec - startTime.tv_sec)*1000000.0 + (stopTime.tv_usec - startTime.tv_usec);
         std::cout << "FPS: " << 1000000.0 / timeUse << std::endl;
 
-        //cv::imshow("Test", realImage);
-        //cv::imshow("final", fieldImage);
-        //cv::waitKey(1);
+    	bk.publishLocalization(dataCenter.m_teamA, dataCenter.m_teamB);
+
+        cv::imshow("Test", realImage);
+        cv::imshow("final", fieldImage);
+        cv::waitKey(1);
     }
 
     return 0;

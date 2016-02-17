@@ -11,12 +11,9 @@
 
 int main(int argc, char** argv)
 {
-	/*Broadcaster bk("live", );
-	int result;
+	Broadcaster bk("localization", "spider_viz", "127.0.0.1");
+	bk.connectServer();
 	const char* message="ha";
-	bk.lib_init();
-	result = bk.connect("127.0.0.1");
-	bk.publish(NULL, "timer", 2, reinterpret_cast<const uint8_t*>(message), 1, false);
-	std::cout << result << std::endl;
-	*/return 0;
+	bk.publish(NULL, "spider_viz", 2, reinterpret_cast<const uint8_t*>(message), 1, false);
+	return 0;
 }

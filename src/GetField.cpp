@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
     cv::Mat rawImage, undistorImage;
     std::vector<cv::Point2d> points;
-    cv::namedWindow("GetField");
+    cv::namedWindow("GetField", cv::WINDOW_KEEPRATIO);
 
     cv::Point2d tmpPoint;
     cv::setMouseCallback("GetField", onMouse, static_cast<void*>(&tmpPoint));
