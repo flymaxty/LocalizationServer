@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <sys/time.h>
 
 #include <opencv2/opencv.hpp>
@@ -53,8 +54,17 @@ int main(int argc, char** argv)
     image2World.m_imageHeight = dataCenter.m_imageHeight;
     image2World.m_imageWidth = dataCenter.m_imageWidth;
 
-    int videoIndex = parser.get<int>("video");
-    cv::VideoCapture camera(videoIndex);
+    cv::VideoCapture camera;
+    std::string videoString = parser.get<std::string>("video");
+    if(videoString.length() == 1)
+    {
+    	int videoIndex = std::stoi(videoString);
+    	camera.open(videoIndex);
+    }
+    else
+    {
+    	camera.open(videoString);
+    }
     camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
     for(int timeout=20; timeout > 0; timeout--)
@@ -106,13 +116,7 @@ int main(int argc, char** argv)
         teamDetect.getTeam(realGreenPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamB);
         //teamDetect.drawTeam(fieldImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
 
-        for(int i=0; i<undistortRedPoints.size(); i++)
-        {
-        	std::cout << "Raw: " << redPoints[i] << std::endl;
-        	std::cout << "Rel: " << realRedPoints[i] << std::endl;
-        }
-
-        std::cout << "> Red Team <" << std::endl;
+       std::cout << "> Red Team <" << std::endl;
         for(int i=0; i<4; i++)
         {
             if(dataCenter.m_teamA.robots[i].online)

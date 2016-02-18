@@ -59,10 +59,23 @@ int main(int argc, char** argv)
     ColorSegmentation colorSegmentation;
     colorSegmentation.setThreshold(dataCenter.m_cartesianMin, dataCenter.m_cartesianMax);
 
-    int videoIndex = parser.get<int>("video");
-    cv::VideoCapture camera(videoIndex);
+    cv::VideoCapture camera;
+    std::string videoString = parser.get<std::string>("video");
+    if(videoString.length() == 1)
+    {
+    	int videoIndex = std::stoi(videoString);
+    	camera.open(videoIndex);
+    }
+    else
+    {
+    	camera.open(videoString);
+    }
     camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
+    for(int timeout=20; timeout > 0; timeout--)
+    {
+        camera.grab();
+    }
 
     cv::Mat rawImage, undistorImage;
     std::vector<cv::Point2d> points;
@@ -128,9 +141,10 @@ int main(int argc, char** argv)
     mapVertex.push_back(cv::Point2d(0.673, 0));
     mapVertex.push_back(cv::Point2d(0.673, 0.575));
 
+    dataCenter.m_mapVertex = vertex;
+
     Image2World image2World;
     image2World.getTransMat(vertex, mapVertex, dataCenter.m_transMatrix);
-    dataCenter.m_mapVertex = vertex;
     dataCenter.saveMatrix();
 
     cv::Mat finalImage;

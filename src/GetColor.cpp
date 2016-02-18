@@ -74,10 +74,23 @@ int main(int argc, char** argv)
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
 
-    int videoIndex = parser.get<int>("video");
-    cv::VideoCapture camera(videoIndex);
+    cv::VideoCapture camera;
+    std::string videoString = parser.get<std::string>("video");
+    if(videoString.length() == 1)
+    {
+    	int videoIndex = std::stoi(videoString);
+    	camera.open(videoIndex);
+    }
+    else
+    {
+    	camera.open(videoString);
+    }
     camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
+    for(int timeout=20; timeout > 0; timeout--)
+    {
+        camera.grab();
+    }
     cv::Mat rawImage;
     camera >> rawImage;
 
