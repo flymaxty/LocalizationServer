@@ -83,8 +83,9 @@ bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
 }
 
 bool Image2World::getTransMat(cv::InputArray in_pointsA,
-		cv::InputOutputArray in_pointsB, cv::InputOutputArray in_mat)
+		cv::InputOutputArray in_pointsB, cv::OutputArray in_mat)
 {
+	in_mat.create(3, 3, CV_64F);
 	cv::Mat transMat = in_mat.getMat();
 
 	cv::Mat matA(*static_cast<const std::vector<cv::Point2d>*>(in_pointsA.getObj()));

@@ -34,7 +34,7 @@ uint16_t TeamDetect::getNearestPoint(cv::Point2d in_point, std::vector<cv::Point
 {
     uint16_t diff = -1;
     cv::Point2d tempPoint;
-    double tmpDistance=9999, distance;
+    double tmpDistance=99999, distance;
     for(uint8_t i=0; i<in_points.size(); i++)
     {
         tempPoint = in_point - in_points[i];

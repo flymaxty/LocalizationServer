@@ -107,6 +107,7 @@ int main(int argc, char** argv)
 			break;
     	case 113:
     	case 10:
+    	    dataCenter.m_mapVertex = vertex;
     		running = false;
     	}
 
@@ -128,33 +129,40 @@ int main(int argc, char** argv)
     }
 
     std::vector<cv::Point2d> mapVertex;
-    //mapVertex.push_back(cv::Point2d(0, 0));
-    //mapVertex.push_back(cv::Point2d(0, 1140));
-    //mapVertex.push_back(cv::Point2d(1340, 1140));
-    //mapVertex.push_back(cv::Point2d(1340, 0));
-
-    mapVertex.push_back(cv::Point2d(0, 0.575));
     mapVertex.push_back(cv::Point2d(0, 0));
-    mapVertex.push_back(cv::Point2d(0.673, 0));
-    mapVertex.push_back(cv::Point2d(0.673, 0.575));
-
-    dataCenter.m_mapVertex = vertex;
+    mapVertex.push_back(cv::Point2d(dataCenter.m_fieldWidth, 0));
+    mapVertex.push_back(cv::Point2d(dataCenter.m_fieldWidth, dataCenter.m_fieldHeight));
+    mapVertex.push_back(cv::Point2d(0, dataCenter.m_fieldHeight));
 
     Image2World image2World;
     image2World.getTransMat(vertex, mapVertex, dataCenter.m_transMatrix);
     dataCenter.saveImageTransform();
 
+    std::vector<cv::Point2d> showVertex;
+    showVertex.push_back(cv::Point2d(0, vertex[0].y - vertex[3].y));
+    showVertex.push_back(cv::Point2d(vertex[1].x - vertex[0].x, vertex[0].y - vertex[3].y));
+    showVertex.push_back(cv::Point2d(vertex[1].x - vertex[0].x, 0));
+    showVertex.push_back(cv::Point2d(0, 0));
+
+    cv::Mat showTransMatrix;
+    image2World.getTransMat(vertex, showVertex, showTransMatrix);
+
+    std::cout << vertex << std::endl;
+    std::cout << mapVertex << std::endl;
+    std::cout << showVertex << std::endl;
+    std::cout << dataCenter.m_transMatrix << std::endl;
+    std::cout << showTransMatrix << std::endl;
+
     cv::Mat finalImage;
-    cv::namedWindow("final", cv::WINDOW_KEEPRATIO);
-    undistorImage.copyTo(finalImage);
+    cv::namedWindow("Final", cv::WINDOW_KEEPRATIO);
     running = true;
     while(running)
     {
     	camera >> rawImage;
     	cv::undistort(rawImage, undistorImage, dataCenter.m_cameraMatrix, dataCenter.m_distCoeffs);
-    	cv::warpPerspective(undistorImage, finalImage, dataCenter.m_transMatrix, cv::Size(1340, 1140));
+    	cv::warpPerspective(undistorImage, finalImage, showTransMatrix, cv::Size(showVertex[1].x, showVertex[1].y));
 
-    	cv::imshow("final", finalImage);
+    	cv::imshow("Final", finalImage);
     	button = cv::waitKey(1);
     	if(button == 113 || button == 10)
     	{

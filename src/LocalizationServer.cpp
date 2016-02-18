@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     }
     camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
-    for(int timeout=20; timeout > 0; timeout--)
+    for(int timeout=60; timeout > 0; timeout--)
     {
         camera.grab();
     }
@@ -112,12 +112,18 @@ int main(int argc, char** argv)
 		image2World.convert2Field(numb1Points, realNumb1Points);
 		image2World.convert2Field(numb2Points, realNumb2Points);
 
-        teamDetect.getTeam(realRedPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamA);
-        //teamDetect.drawTeam(fieldImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
-        teamDetect.getTeam(realGreenPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamB);
-        //teamDetect.drawTeam(fieldImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
+		std::cout << realRedPoints << std::endl;
+		std::cout << realGreenPoints << std::endl;
+		std::cout << realNumb1Points << std::endl;
+		std::cout << realNumb2Points << std::endl;
 
-       std::cout << "> Red Team <" << std::endl;
+		teamDetect.getTeam(realRedPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamA);
+		//teamDetect.drawTeam(fieldImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
+
+		teamDetect.getTeam(realGreenPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamB);
+		//teamDetect.drawTeam(fieldImage, cv::Scalar(0, 255, 0), dataCenter.m_teamB);
+
+        std::cout << "> Red Team <" << std::endl;
         for(int i=0; i<4; i++)
         {
             if(dataCenter.m_teamA.robots[i].online)
