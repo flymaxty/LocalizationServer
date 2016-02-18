@@ -10,8 +10,7 @@
 
 const std::string aboutString = "GetColor v0.1.0";
 const std::string paramKeys =
-    "{help h    |   |Print help}"
-    "{video     |   |Video index}";
+    "{help h    |   |Print help}";
 
 void helpMessage(cv::CommandLineParser& in_parser)
 {
@@ -54,24 +53,22 @@ int main(int argc, char** argv)
     helpMessage(parser);
 
     DataCenter dataCenter;
-    dataCenter.loadAllParam();
 
     ColorSegmentation colorSegmentation;
     colorSegmentation.setThreshold(dataCenter.m_cartesianMin, dataCenter.m_cartesianMax);
 
     cv::VideoCapture camera;
-    std::string videoString = parser.get<std::string>("video");
-    if(videoString.length() == 1)
+    if(dataCenter.m_cameraString.length() == 1)
     {
-    	int videoIndex = std::stoi(videoString);
+    	int videoIndex = std::stoi(dataCenter.m_cameraString);
     	camera.open(videoIndex);
     }
     else
     {
-    	camera.open(videoString);
+    	camera.open(dataCenter.m_cameraString);
     }
-    camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
-    camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
     for(int timeout=20; timeout > 0; timeout--)
     {
         camera.grab();
@@ -145,7 +142,7 @@ int main(int argc, char** argv)
 
     Image2World image2World;
     image2World.getTransMat(vertex, mapVertex, dataCenter.m_transMatrix);
-    dataCenter.saveMatrix();
+    dataCenter.saveImageTransform();
 
     cv::Mat finalImage;
     cv::namedWindow("final", cv::WINDOW_KEEPRATIO);

@@ -14,8 +14,7 @@
 
 const std::string aboutString = "LocalizationServer v0.1.0";
 const std::string paramKeys =
-    "{help h    |   |Print help}"
-    "{video     |   |Video index}";
+    "{help h    |   |Print help}";
 
 void helpMessage(cv::CommandLineParser& in_parser)
 {
@@ -39,7 +38,6 @@ int main(int argc, char** argv)
     ColorSegmentation numb2Segmentation;
     TeamDetect teamDetect;
 
-    dataCenter.loadAllParam();
     redSegmentation.setThreshold(dataCenter.m_teamAMin, dataCenter.m_teamAMax);
     greenSegmentation.setThreshold(dataCenter.m_teamBMin, dataCenter.m_teamBMax);
     numb1Segmentation.setThreshold(dataCenter.m_teamNumb1Min, dataCenter.m_teamNumb1Max);
@@ -55,18 +53,17 @@ int main(int argc, char** argv)
     image2World.m_imageWidth = dataCenter.m_imageWidth;
 
     cv::VideoCapture camera;
-    std::string videoString = parser.get<std::string>("video");
-    if(videoString.length() == 1)
+    if(dataCenter.m_cameraString.length() == 1)
     {
-    	int videoIndex = std::stoi(videoString);
+    	int videoIndex = std::stoi(dataCenter.m_cameraString);
     	camera.open(videoIndex);
     }
     else
     {
-    	camera.open(videoString);
+    	camera.open(dataCenter.m_cameraString);
     }
-    camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
-    camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
     for(int timeout=20; timeout > 0; timeout--)
     {
         camera.grab();
@@ -84,10 +81,14 @@ int main(int argc, char** argv)
     double timeUse;
     struct timeval startTime, stopTime;
 
-	Broadcaster bk("localization", "spider_viz", "127.0.0.1");
+	Broadcaster bk(dataCenter.m_mqttNodeName.c_str(),
+			dataCenter.m_mqttLocalizationTopic.c_str(),
+			dataCenter.m_mqttMasterIP.c_str());
 	bk.connectServer();
 
-    while(1)
+    int button;
+    bool running = true;
+    while(running)
     {
         std::cout << "================== Start ==================" << std::endl;
         gettimeofday(&startTime, NULL);
@@ -149,7 +150,11 @@ int main(int argc, char** argv)
 
         cv::imshow("Test", realImage);
         cv::imshow("final", fieldImage);
-        cv::waitKey(1);
+        button = cv::waitKey(1);
+    	if(button == 113 || button == 10)
+    	{
+    		running = false;
+    	}
     }
 
     return 0;

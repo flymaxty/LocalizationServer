@@ -31,6 +31,9 @@ public:
     cv::Scalar m_cartesianMax;
 
     //Camera
+    std::string m_cameraString;
+    uint16_t m_imageWidth;
+    uint16_t m_imageHeight;
     cv::Mat m_cameraMatrix;
     cv::Mat m_distCoeffs;
 
@@ -38,35 +41,41 @@ public:
     cv::Mat m_transMatrix;
     std::vector<cv::Point2d> m_mapVertex;
 
-    //Image
-    uint16_t m_imageWidth;
-    uint16_t m_imageHeight;
-
-    //Filed(Meter)
+    //Filed
     double m_fieldWidth;
     double m_fieldHeight;
 
-    //Robot(Meter)
+    //Robot
     double m_robotRadius;
+    double m_robotHeight;
+
+    //MQTT topic
+    std::string m_mqttNodeName;
+    std::string m_mqttMasterIP;
+    std::string m_mqttLocalizationTopic;
 
 public:
-    std::string m_thresholdFileName;
-    std::string m_cameraMatrixFileName;
-    std::string m_matrixFileName;
+    std::string m_segmentationThresholdFilePath;
+    std::string m_cameraCalibrationFilePath;
+    std::string m_imageTransformFileNamePath;
+    std::string m_basicFilePath;
 public:
     DataCenter();
     ~DataCenter();
 
     bool loadAllParam();
 
-    bool loadThreshold();
-    bool saveThreshold();
+    bool loadSegmentationThreshold();
+    bool saveSegmentationThreshold();
 
-    bool loadCameraMatrix();
-    bool saveCameraMatrix();
+    bool loadCameraCalibration();
+    bool saveCameraCalibration();
 
-    bool loadMatrix();
-    bool saveMatrix();
+    bool loadImageTransform();
+    bool saveImageTransform();
+
+    bool loadBasicParam();
+    bool saveBasicParam();
 };
 
 #endif /* SRC_DATACENTER_H_ */

@@ -10,8 +10,7 @@
 
 const std::string aboutString = "GetColor v0.1.0";
 const std::string paramKeys =
-    "{help h    |   |Print help}"
-    "{video     |   |Video index}";
+    "{help h    |   |Print help}";
 
 void ValueCallback(int thres, void* in_data)
 {
@@ -67,7 +66,6 @@ void helpMessage(cv::CommandLineParser& in_parser)
 int main(int argc, char** argv)
 {
     DataCenter dataCenter;
-    dataCenter.loadThreshold();
 
     ColorSegmentation colorSegmentation;
 
@@ -75,18 +73,17 @@ int main(int argc, char** argv)
     helpMessage(parser);
 
     cv::VideoCapture camera;
-    std::string videoString = parser.get<std::string>("video");
-    if(videoString.length() == 1)
+    if(dataCenter.m_cameraString.length() == 1)
     {
-    	int videoIndex = std::stoi(videoString);
+    	int videoIndex = std::stoi(dataCenter.m_cameraString);
     	camera.open(videoIndex);
     }
     else
     {
-    	camera.open(videoString);
+    	camera.open(dataCenter.m_cameraString);
     }
-    camera.set(cv::CAP_PROP_FRAME_WIDTH, 1024);
-    camera.set(cv::CAP_PROP_FRAME_HEIGHT, 768);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
     for(int timeout=20; timeout > 0; timeout--)
     {
         camera.grab();
@@ -187,7 +184,7 @@ int main(int argc, char** argv)
         }
     }
 
-    dataCenter.saveThreshold();
+    dataCenter.saveSegmentationThreshold();
 
     return 0;
 }

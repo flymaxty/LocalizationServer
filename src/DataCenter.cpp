@@ -9,17 +9,12 @@
 
 DataCenter::DataCenter()
 {
-	m_thresholdFileName = "Threshold.yaml";
-	m_cameraMatrixFileName = "CameraMatrix.yaml";
-	m_matrixFileName = "Matrix.yaml";
+	m_basicFilePath = "param/Basic.yaml";
+	m_segmentationThresholdFilePath = "param/SegmentationThreshold.yaml";
+	m_cameraCalibrationFilePath = "param/CameraCalibration.yaml";
+	m_imageTransformFileNamePath = "param/ImageTransform.yaml";
 
-    m_fieldWidth = 0.673;
-    m_fieldHeight = 0.575;
-
-    m_imageWidth = 1340;
-    m_imageHeight = 1140;
-
-    m_robotRadius = 0.15;
+	loadAllParam();
 }
 
 DataCenter::~DataCenter()
@@ -29,14 +24,27 @@ DataCenter::~DataCenter()
 
 bool DataCenter::loadAllParam()
 {
-	loadThreshold();
-	loadCameraMatrix();
-	loadMatrix();
+	bool result;
+	if(loadBasicParam() && loadSegmentationThreshold()
+			&& loadCameraCalibration() && loadImageTransform())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
-bool DataCenter::loadCameraMatrix()
+bool DataCenter::loadCameraCalibration()
 {
-	cv::FileStorage paramFile = cv::FileStorage(m_cameraMatrixFileName, cv::FileStorage::READ);
+	cv::FileStorage paramFile = cv::FileStorage(m_cameraCalibrationFilePath, cv::FileStorage::READ);
+
+	if(!paramFile.isOpened())
+	{
+		std::cout << "No such file: " << m_cameraCalibrationFilePath << std::endl;
+		return false;
+	}
 
 	paramFile["camera_matrix"] >> m_cameraMatrix;
 	paramFile["distortion_coefficients"] >> m_distCoeffs;
@@ -45,9 +53,15 @@ bool DataCenter::loadCameraMatrix()
 	return true;
 }
 
-bool DataCenter::loadThreshold()
+bool DataCenter::loadSegmentationThreshold()
 {
-    cv::FileStorage paramFile = cv::FileStorage(m_thresholdFileName, cv::FileStorage::READ);
+    cv::FileStorage paramFile = cv::FileStorage(m_segmentationThresholdFilePath, cv::FileStorage::READ);
+
+	if(!paramFile.isOpened())
+	{
+		std::cout << "No such file: " << m_segmentationThresholdFilePath << std::endl;
+		return false;
+	}
 
     paramFile["TeamAMin"] >> m_teamAMin;
     paramFile["TeamAMax"] >> m_teamAMax;
@@ -64,9 +78,9 @@ bool DataCenter::loadThreshold()
     return true;
 }
 
-bool DataCenter::saveThreshold()
+bool DataCenter::saveSegmentationThreshold()
 {
-	cv::FileStorage paramFile = cv::FileStorage(m_thresholdFileName, cv::FileStorage::WRITE);
+	cv::FileStorage paramFile = cv::FileStorage(m_segmentationThresholdFilePath, cv::FileStorage::WRITE);
 
 	paramFile << "TeamAMin" << m_teamAMin;
 	paramFile << "TeamAMax" << m_teamAMax;
@@ -83,9 +97,15 @@ bool DataCenter::saveThreshold()
     return true;
 }
 
-bool DataCenter::loadMatrix()
+bool DataCenter::loadImageTransform()
 {
-    cv::FileStorage paramFile = cv::FileStorage(m_matrixFileName, cv::FileStorage::READ);
+    cv::FileStorage paramFile = cv::FileStorage(m_imageTransformFileNamePath, cv::FileStorage::READ);
+
+	if(!paramFile.isOpened())
+	{
+		std::cout << "No such file: " << m_imageTransformFileNamePath << std::endl;
+		return false;
+	}
 
     paramFile["mapVertex"] >> m_mapVertex;
     paramFile["transMatrix"] >> m_transMatrix;
@@ -94,12 +114,50 @@ bool DataCenter::loadMatrix()
     return true;
 }
 
-bool DataCenter::saveMatrix()
+bool DataCenter::saveImageTransform()
 {
-	cv::FileStorage paramFile = cv::FileStorage(m_matrixFileName, cv::FileStorage::WRITE);
+	cv::FileStorage paramFile = cv::FileStorage(m_imageTransformFileNamePath, cv::FileStorage::WRITE);
 
 	paramFile << "mapVertex" << m_mapVertex;
 	paramFile << "transMatrix" << m_transMatrix;
+
+	paramFile.release();
+    return true;
+}
+
+bool DataCenter::loadBasicParam()
+{
+    cv::FileStorage paramFile = cv::FileStorage(m_basicFilePath, cv::FileStorage::READ);
+
+	if(!paramFile.isOpened())
+	{
+		std::cout << "No such file: " << m_basicFilePath << std::endl;
+		return false;
+	}
+
+    paramFile["CameraIndex"] >> m_cameraString;
+    paramFile["ImageWidth"] >> m_imageWidth;
+    paramFile["ImageHeight"] >> m_imageHeight;
+
+    paramFile["FieldWidth"] >> m_fieldWidth;
+    paramFile["FieldHeight"] >> m_fieldHeight;
+
+    paramFile["RobotRadius"] >> m_robotRadius;
+    paramFile["RobotHeight"] >> m_robotHeight;
+
+    paramFile["NodeName"] >> m_mqttNodeName;
+    paramFile["MasterIP"] >> m_mqttMasterIP;
+    paramFile["LocalizationTopic"] >> m_mqttLocalizationTopic;
+
+    paramFile.release();
+    return true;
+}
+
+bool DataCenter::saveBasicParam()
+{
+	cv::FileStorage paramFile = cv::FileStorage(m_basicFilePath, cv::FileStorage::WRITE);
+
+	/* Do nothing */
 
 	paramFile.release();
     return true;
