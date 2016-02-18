@@ -1,0 +1,11 @@
+%YAML:1.0
+TeamAMin: [ 0., 147., 0., 0. ]
+TeamAMax: [ 113., 255., 255., 0. ]
+TeamBMin: [ 45., 76., 0., 0. ]
+TeamBMax: [ 160., 120., 112., 0. ]
+TeamNumb1Min: [ 0., 0., 138., 0. ]
+TeamNumb1Max: [ 255., 111., 255., 0. ]
+TeamNumb2Min: [ 82., 145., 0., 0. ]
+TeamNumb2Max: [ 255., 255., 72., 0. ]
+CartesianMin: [ 0., 0., 0., 0. ]
+CartesianMax: [ 45., 255., 255., 0. ]
