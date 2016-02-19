@@ -11,11 +11,13 @@ FieldHeight: 0.574
 
 #Robot size
 RobotRadius: 0.05
-RobotHeight: 0.05
+RobotHeight: 0.0614
 
 #Camera Index(camera number or video file path)
-#CameraIndex: video/multi_move.avi
-CameraIndex: video/error_check.avi
+#CameraIndex: "video/multi_move.avi"
+#CameraIndex: "video/error_check.avi"
+CameraIndex: "1"
+CameraHeight: 0.7925
 
 #Camera image size(warnning: please check calibration program param)
 ImageWidth: 1024

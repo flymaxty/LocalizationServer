@@ -10,13 +10,14 @@
 
 #include "TeamDetect.h"
 
-TeamDetect::TeamDetect() {
-    // TODO Auto-generated constructor stub
+TeamDetect::TeamDetect()
+{
 
 }
 
-TeamDetect::~TeamDetect() {
-    // TODO Auto-generated destructor stub
+TeamDetect::~TeamDetect()
+{
+
 }
 
 bool TeamDetect::initTeamState(RobotTeam& in_team)

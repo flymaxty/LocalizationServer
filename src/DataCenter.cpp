@@ -109,6 +109,7 @@ bool DataCenter::loadImageTransform()
 
     paramFile["mapVertex"] >> m_mapVertex;
     paramFile["transMatrix"] >> m_transMatrix;
+    paramFile["imageCenterInMap"] >> m_imageCenterInMap;
 
     paramFile.release();
     return true;
@@ -120,6 +121,7 @@ bool DataCenter::saveImageTransform()
 
 	paramFile << "mapVertex" << m_mapVertex;
 	paramFile << "transMatrix" << m_transMatrix;
+	paramFile << "imageCenterInMap" << m_imageCenterInMap;
 
 	paramFile.release();
     return true;
@@ -136,6 +138,7 @@ bool DataCenter::loadBasicParam()
 	}
 
     paramFile["CameraIndex"] >> m_cameraString;
+    paramFile["CameraHeight"] >> m_cameraHeight;
     paramFile["ImageWidth"] >> m_imageWidth;
     paramFile["ImageHeight"] >> m_imageHeight;
 

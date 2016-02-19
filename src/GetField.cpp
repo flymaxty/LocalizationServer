@@ -67,8 +67,8 @@ int main(int argc, char** argv)
     {
     	camera.open(dataCenter.m_cameraString);
     }
-    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
-    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_imageWidth);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_imageHeight);
     for(int timeout=20; timeout > 0; timeout--)
     {
         camera.grab();
@@ -134,8 +134,20 @@ int main(int argc, char** argv)
     mapVertex.push_back(cv::Point2d(dataCenter.m_fieldWidth, dataCenter.m_fieldHeight));
     mapVertex.push_back(cv::Point2d(0, dataCenter.m_fieldHeight));
 
-    Image2World image2World;
+    Image2World image2World(&dataCenter);
     image2World.getTransMat(vertex, mapVertex, dataCenter.m_transMatrix);
+    image2World.m_cameraMatrix = dataCenter.m_cameraMatrix;
+    image2World.m_distCoeffs = dataCenter.m_distCoeffs;
+    image2World.m_transMat = dataCenter.m_transMatrix;
+    image2World.m_fieldHeight = dataCenter.m_fieldHeight;
+    image2World.m_fieldWidth = dataCenter.m_fieldWidth;
+    image2World.m_imageHeight = dataCenter.m_imageHeight;
+    image2World.m_imageWidth = dataCenter.m_imageWidth;
+    std::vector<cv::Point2d> imageCenter, imageCenterInMap;
+    imageCenter.push_back(cv::Point2d(dataCenter.m_imageWidth/2, dataCenter.m_imageHeight/2));
+    image2World.convert2Field(imageCenter, imageCenterInMap);
+    std::cout << imageCenterInMap << std::endl;
+    dataCenter.m_imageCenterInMap = imageCenterInMap[0];
     dataCenter.saveImageTransform();
 
     std::vector<cv::Point2d> showVertex;
@@ -169,6 +181,8 @@ int main(int argc, char** argv)
     		running = false;
     	}
     }
+
+    camera.release();
 
     return 0;
 }

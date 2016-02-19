@@ -82,8 +82,8 @@ int main(int argc, char** argv)
     {
     	camera.open(dataCenter.m_cameraString);
     }
-    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
-    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_imageWidth);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_imageHeight);
     for(int timeout=20; timeout > 0; timeout--)
     {
         camera.grab();
@@ -185,6 +185,7 @@ int main(int argc, char** argv)
     }
 
     dataCenter.saveSegmentationThreshold();
+    camera.release();
 
     return 0;
 }

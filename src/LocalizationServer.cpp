@@ -36,21 +36,15 @@ int main(int argc, char** argv)
     ColorSegmentation greenSegmentation;
     ColorSegmentation numb1Segmentation;
     ColorSegmentation numb2Segmentation;
-    TeamDetect teamDetect;
 
     redSegmentation.setThreshold(dataCenter.m_teamAMin, dataCenter.m_teamAMax);
     greenSegmentation.setThreshold(dataCenter.m_teamBMin, dataCenter.m_teamBMax);
     numb1Segmentation.setThreshold(dataCenter.m_teamNumb1Min, dataCenter.m_teamNumb1Max);
     numb2Segmentation.setThreshold(dataCenter.m_teamNumb2Min, dataCenter.m_teamNumb2Max);
 
-    Image2World image2World;
-    image2World.m_cameraMatrix = dataCenter.m_cameraMatrix;
-    image2World.m_distCoeffs = dataCenter.m_distCoeffs;
-    image2World.m_transMat = dataCenter.m_transMatrix;
-    image2World.m_fieldHeight = dataCenter.m_fieldHeight;
-    image2World.m_fieldWidth = dataCenter.m_fieldWidth;
-    image2World.m_imageHeight = dataCenter.m_imageHeight;
-    image2World.m_imageWidth = dataCenter.m_imageWidth;
+    Image2World image2World(&dataCenter);
+
+    TeamDetect teamDetect;
 
     cv::VideoCapture camera;
     if(dataCenter.m_cameraString.length() == 1)
@@ -62,8 +56,8 @@ int main(int argc, char** argv)
     {
     	camera.open(dataCenter.m_cameraString);
     }
-    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_fieldWidth);
-    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_fieldHeight);
+    camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_imageWidth);
+    camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_imageHeight);
     for(int timeout=60; timeout > 0; timeout--)
     {
         camera.grab();
@@ -112,11 +106,11 @@ int main(int argc, char** argv)
 		image2World.convert2Field(numb1Points, realNumb1Points);
 		image2World.convert2Field(numb2Points, realNumb2Points);
 
-		std::cout << realRedPoints << std::endl;
+/*		std::cout << realRedPoints << std::endl;
 		std::cout << realGreenPoints << std::endl;
 		std::cout << realNumb1Points << std::endl;
 		std::cout << realNumb2Points << std::endl;
-
+*/
 		teamDetect.getTeam(realRedPoints, realNumb1Points, realNumb2Points, dataCenter.m_teamA);
 		//teamDetect.drawTeam(fieldImage, cv::Scalar(0, 0, 255), dataCenter.m_teamA);
 
@@ -162,6 +156,8 @@ int main(int argc, char** argv)
     		running = false;
     	}
     }
+
+    camera.release();
 
     return 0;
 }

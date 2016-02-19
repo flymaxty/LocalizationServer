@@ -32,6 +32,7 @@ public:
 
     //Camera
     std::string m_cameraString;
+    double m_cameraHeight;
     uint16_t m_imageWidth;
     uint16_t m_imageHeight;
     cv::Mat m_cameraMatrix;
@@ -40,6 +41,7 @@ public:
     //Map
     cv::Mat m_transMatrix;
     std::vector<cv::Point2d> m_mapVertex;
+    cv::Point2d m_imageCenterInMap;
 
     //Filed
     double m_fieldWidth;

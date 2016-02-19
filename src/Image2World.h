@@ -10,6 +10,8 @@
 
 #include "opencv2/opencv.hpp"
 
+#include "DataCenter.h"
+
 class Image2World {
 public:
 	cv::Mat m_cameraMatrix;
@@ -24,10 +26,15 @@ public:
     uint16_t m_imageWidth;
     uint16_t m_imageHeight;
 
+    double m_cameraHeight;
+    double m_robotHeight;
+    double m_heightCorrection;
+
 public:
-	Image2World();
+	Image2World(DataCenter *in_dataCenter);
 	~Image2World();
 
+	bool fixErrorByHeight(std::vector<cv::Point2d>& in_points);
 	bool undistortPoints(std::vector<cv::Point2d>& in_pointsA,
 			std::vector<cv::Point2d>& in_pointsB);
 	bool getTransMat(cv::InputArray in_pointsA,
