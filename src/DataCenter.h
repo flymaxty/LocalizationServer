@@ -51,6 +51,11 @@ public:
     double m_robotRadius;
     double m_robotHeight;
 
+    //Obstacle
+    std::vector<Obstacle> m_obstacles;
+    double m_obsHeight;
+    double m_obsMinArea;
+
     //MQTT topic
     std::string m_mqttNodeName;
     std::string m_mqttMasterIP;

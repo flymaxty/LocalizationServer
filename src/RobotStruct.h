@@ -8,6 +8,18 @@
 #ifndef SRC_ROBOTSTRUCT_H_
 #define SRC_ROBOTSTRUCT_H_
 
+//Mosquitto define
+#define MOSQUITTO_ROBOT_TYPE 0
+#define MOSQUITTO_OBSTACLE_TYPE 1
+
+//Obstacle Struct
+struct Obstacle
+{
+	uint8_t id;
+	double x;
+	double y;
+};
+
 //Robot Struct
 struct Robot
 {

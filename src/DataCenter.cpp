@@ -152,6 +152,9 @@ bool DataCenter::loadBasicParam()
     paramFile["MasterIP"] >> m_mqttMasterIP;
     paramFile["LocalizationTopic"] >> m_mqttLocalizationTopic;
 
+    paramFile["ObsMinArea"] >> m_obsMinArea;
+    paramFile["ObsHeight"] >> m_obsHeight;
+
     paramFile.release();
     return true;
 }

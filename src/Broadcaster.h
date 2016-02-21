@@ -8,6 +8,8 @@
 #ifndef BROADCASTER_H_
 #define BROADCASTER_H_
 
+#include <vector>
+
 #include <mosquittopp.h>
 
 #include "RobotStruct.h"
@@ -22,7 +24,7 @@ public:
 	Broadcaster(const char *in_id, const char *in_topic, const char * in_host, int in_port=1883);
 	virtual ~Broadcaster();
 	bool connectServer();
-	void publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB);
+	void publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB, std::vector<Obstacle> in_obstacles);
 
 };
 

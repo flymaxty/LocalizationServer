@@ -69,10 +69,14 @@ bool ColorSegmentation::getBlocks(cv::InputArray in_image, std::vector<cv::Point
     {
         for(uint16_t i=0; i<m_contours.size(); i++)
         {
-            mnt = cv::moments(m_contours[i]);
-            cx = mnt.m10 / mnt.m00;
-            cy = mnt.m01 / mnt.m00;
-            in_points.push_back(cv::Point2d(cx, cy));
+        	if(fabs(cv::contourArea(m_contours[i])) > 90)
+        	{
+                mnt = cv::moments(m_contours[i]);
+                cx = mnt.m10 / mnt.m00;
+                cy = mnt.m01 / mnt.m00;
+                in_points.push_back(cv::Point2d(cx, cy));
+        	}
+
         }
     }
 

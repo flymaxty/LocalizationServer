@@ -19,9 +19,7 @@ Image2World::Image2World(DataCenter *in_dataCenter)
     m_imageHeight = in_dataCenter->m_imageHeight;
     m_imageWidth = in_dataCenter->m_imageWidth;
 
-    m_robotHeight = in_dataCenter->m_robotHeight;
     m_cameraHeight = in_dataCenter->m_cameraHeight;
-    m_heightCorrection = 1.0 - m_robotHeight / m_cameraHeight;
 }
 
 Image2World::~Image2World()
@@ -29,6 +27,7 @@ Image2World::~Image2World()
 	// TODO Auto-generated destructor stub
 }
 
+/*
 bool Image2World::fixErrorByHeight(std::vector<cv::Point2d>& in_points)
 {
 	for(uint16_t i=0; i< in_points.size(); i++)
@@ -38,10 +37,10 @@ bool Image2World::fixErrorByHeight(std::vector<cv::Point2d>& in_points)
 		std::cout << in_points[i] << std::endl;
 	}
 	return true;
-}
+}*/
 
 bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
-		std::vector<cv::Point2d>& in_pointsB)
+		std::vector<cv::Point2d>& in_pointsB, double in_height)
 {
 	in_pointsB.clear();
 	if(in_pointsA.size() == 0)
@@ -50,7 +49,8 @@ bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
 	}
 
 	std::vector<cv::Point2d> undistortPointsB, mirrorFieldPoints;
-	undistortPoints(in_pointsA, undistortPointsB);
+	double heightCorrection = 1.0 - in_height / m_cameraHeight;
+	undistortPoints(in_pointsA, undistortPointsB, heightCorrection);
 	perspectiveTransform(undistortPointsB, in_pointsB);
 	//fixErrorByHeight(in_pointsB);
 	//changeCoordinate(mirrorFieldPoints, in_pointsB);
@@ -84,7 +84,7 @@ bool Image2World::changeCoordinate(std::vector<cv::Point2d>& in_pointsA,
 }
 
 bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
-		std::vector<cv::Point2d>& in_pointsB)
+		std::vector<cv::Point2d>& in_pointsB, double in_heightCorrection)
 {
 	in_pointsB.clear();
 	if(in_pointsA.size() == 0)
@@ -102,8 +102,8 @@ bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
     	//std::cout << "x: " << dst.at<double>(i, 0) << " y: " << dst.at<double>(i, 1) << std::endl;
     	//tempPoint.x = dst.at<double>(i, 0) * m_cameraMatrix.at<double>(0, 0) + m_cameraMatrix.at<double>(0, 2);
     	//tempPoint.y = dst.at<double>(i, 1) * m_cameraMatrix.at<double>(1, 1) + m_cameraMatrix.at<double>(1, 2);
-    	tempPoint.x = dst.at<double>(i, 0) * m_cameraMatrix.at<double>(0, 0) * m_heightCorrection + m_cameraMatrix.at<double>(0, 2);
-    	tempPoint.y = dst.at<double>(i, 1) * m_cameraMatrix.at<double>(1, 1) * m_heightCorrection + m_cameraMatrix.at<double>(1, 2);
+    	tempPoint.x = dst.at<double>(i, 0) * m_cameraMatrix.at<double>(0, 0) * in_heightCorrection + m_cameraMatrix.at<double>(0, 2);
+    	tempPoint.y = dst.at<double>(i, 1) * m_cameraMatrix.at<double>(1, 1) * in_heightCorrection + m_cameraMatrix.at<double>(1, 2);
     	in_pointsB.push_back(tempPoint);
     }
 	return true;
