@@ -122,12 +122,16 @@ int main(int argc, char** argv)
 		Obstacle tmpObstacle;
 		for(int j=0; j<realObsPoints.size(); j++)
 		{
-			tmpObstacle.id = dataCenter.m_obstacles.size();
-			tmpObstacle.x = realObsPoints[j].x;
-			tmpObstacle.y = realObsPoints[j].y;
-			dataCenter.m_obstacles.push_back(tmpObstacle);
+			if(realObsPoints[j].x > 0 && realObsPoints[j].x < dataCenter.m_imageWidth
+					&& realObsPoints[j].y > 0 && realObsPoints[j].y < dataCenter.m_imageHeight)
+			{
+				tmpObstacle.id = dataCenter.m_obstacles.size();
+				tmpObstacle.x = realObsPoints[j].x;
+				tmpObstacle.y = realObsPoints[j].y;
+				dataCenter.m_obstacles.push_back(tmpObstacle);
 
-			std::cout << realObsPoints[j] << std::endl;
+				std::cout << realObsPoints[j] << std::endl;
+			}
 		}
 /*		std::cout << realRedPoints << std::endl;
 		std::cout << realGreenPoints << std::endl;
