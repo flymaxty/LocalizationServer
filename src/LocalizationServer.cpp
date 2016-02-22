@@ -16,6 +16,7 @@
 const std::string aboutString = "LocalizationServer v0.1.0";
 const std::string paramKeys =
     "{help h    |   |Print help}";
+bool running;
 
 void helpMessage(cv::CommandLineParser& in_parser)
 {
@@ -25,6 +26,20 @@ void helpMessage(cv::CommandLineParser& in_parser)
         in_parser.printMessage();
         exit(0);
     }
+}
+
+void* grabFunc(void* in_data)
+{
+	cv::VideoCapture *camera = (cv::VideoCapture*)in_data;
+    while(running)
+    {
+        if(camera->isOpened())
+        {
+            camera->grab();
+        }
+    }
+
+    std::cout << "Grab thread exit." << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -84,13 +99,15 @@ int main(int argc, char** argv)
 	bk.connectServer();
 
     int button;
-    bool running = true;
+    running = true;
+    pthread_t grabThread;
+    pthread_create(&grabThread, NULL, grabFunc, (void*)(&camera));
     while(running)
     {
         std::cout << "================== Start ==================" << std::endl;
         gettimeofday(&startTime, NULL);
 
-        camera >> rawImage;
+        camera.retrieve(rawImage);
         rawImage.copyTo(realImage);
 
         obsSegmentation.getBlocks(rawImage, obsPoints);
@@ -130,7 +147,7 @@ int main(int argc, char** argv)
 				tmpObstacle.y = realObsPoints[j].y;
 				dataCenter.m_obstacles.push_back(tmpObstacle);
 
-				std::cout << realObsPoints[j] << std::endl;
+				//std::cout << realObsPoints[j] << std::endl;
 			}
 		}
 /*		std::cout << realRedPoints << std::endl;
@@ -191,6 +208,8 @@ int main(int argc, char** argv)
     	}
     }
 
+    void* result;
+    pthread_join(grabThread, &result);
     camera.release();
 
     return 0;

@@ -31,7 +31,7 @@ bool TeamDetect::initTeamState(RobotTeam& in_team)
     return true;
 }
 
-uint16_t TeamDetect::getNearestPoint(cv::Point2d in_point, std::vector<cv::Point2d> in_points, int16_t in_maskId)
+int16_t TeamDetect::getNearestPoint(cv::Point2d in_point, std::vector<cv::Point2d> in_points, int16_t in_maskId)
 {
     uint16_t diff = -1;
     cv::Point2d tempPoint;
@@ -50,7 +50,7 @@ uint16_t TeamDetect::getNearestPoint(cv::Point2d in_point, std::vector<cv::Point
     return diff;
 }
 
-uint8_t TeamDetect::getRobotId(uint16_t in_index1, uint16_t in_index2, uint16_t in_numb1End)
+int8_t TeamDetect::getRobotId(int16_t in_index1, int16_t in_index2, int16_t in_numb1End)
 {
     uint8_t id = -1;
     if(in_index1 <= in_numb1End)
@@ -83,7 +83,7 @@ Robot TeamDetect::getTeamMember(cv::Point2d in_teamPoint, std::vector<cv::Point2
         uint16_t in_numb1End)
 {
     Robot robot;
-    uint16_t index1, index2;
+    int16_t index1, index2;
 
     index1 = getNearestPoint(in_teamPoint, in_numbPoints);
     index2 = getNearestPoint(in_teamPoint, in_numbPoints, index1);
