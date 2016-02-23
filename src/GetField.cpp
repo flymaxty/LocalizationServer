@@ -54,8 +54,8 @@ int main(int argc, char** argv)
 
     DataCenter dataCenter;
 
-    ColorSegmentation colorSegmentation;
-    colorSegmentation.setThreshold(dataCenter.m_cartesianMin, dataCenter.m_cartesianMax);
+    ColorSegmentation colorSegmentation(dataCenter.m_cartesianMin, dataCenter.m_cartesianMax,
+    		dataCenter.m_obsMinArea);
 
     cv::VideoCapture camera;
     if(dataCenter.m_cameraString.length() == 1)

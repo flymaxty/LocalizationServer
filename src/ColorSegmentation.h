@@ -14,6 +14,7 @@ class ColorSegmentation {
 private:
     cv::Scalar m_minValue;
     cv::Scalar m_maxValue;
+    double m_minArea;
 public:
     cv::Mat m_yuvImage;
     cv::Mat m_thresholdImage;
@@ -22,7 +23,7 @@ public:
     std::vector<cv::Point2d> m_points;
     std::vector<std::vector<cv::Point> > m_contours;
 public:
-    ColorSegmentation();
+    ColorSegmentation(cv::Scalar minValue, cv::Scalar maxValue, double in_minArea);
     ~ColorSegmentation();
 
     void drawPoints(cv::InputOutputArray in_image, cv::Scalar in_color);

@@ -12,6 +12,9 @@ const std::string aboutString = "GetColor v0.1.0";
 const std::string paramKeys =
     "{help h    |   |Print help}";
 
+double widthTimes;
+double heightTimes;
+
 void ValueCallback(int thres, void* in_data)
 {
     double* value = (double*)in_data;
@@ -37,9 +40,11 @@ void onMouse(int event, int x, int y, int flags, void* in_data)
 
         int yValue, uValue, vValue;
         cv::cvtColor(*pImage, yuvImage, cv::COLOR_BGR2YUV);
-        yValue = yuvImage.at<cv::Vec3b>(y-10, x-10)[0];
-        uValue = yuvImage.at<cv::Vec3b>(y-10, x-10)[1];
-        vValue = yuvImage.at<cv::Vec3b>(y-10, x-10)[2];
+        double targetX = (x-10) * widthTimes;
+        double targetY = (y-10) * heightTimes;
+        yValue = yuvImage.at<cv::Vec3b>(targetY, targetX)[0];
+        uValue = yuvImage.at<cv::Vec3b>(targetY, targetX)[1];
+        vValue = yuvImage.at<cv::Vec3b>(targetY, targetX)[2];
 
         if(event == cv::EVENT_LBUTTONUP)
         {
@@ -65,12 +70,13 @@ void helpMessage(cv::CommandLineParser& in_parser)
 
 int main(int argc, char** argv)
 {
-    DataCenter dataCenter;
-
-    ColorSegmentation colorSegmentation;
-
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
+
+    DataCenter dataCenter;
+    widthTimes = dataCenter.m_imageWidth / IMAGE_WIDTH;
+    heightTimes = dataCenter.m_imageHeight / IMAGE_HEIGHT;
+    std::cout << widthTimes << std::endl;
 
     cv::VideoCapture camera;
     if(dataCenter.m_cameraString.length() == 1)
@@ -91,9 +97,9 @@ int main(int argc, char** argv)
     cv::Mat rawImage;
     camera >> rawImage;
 
-    cv::Mat smallImage;
-    cv::namedWindow("BigImage", cv::WINDOW_FULLSCREEN);
-    cv::setMouseCallback("BigImage", onMouse, (void*)(&smallImage));
+    cv::Mat bottomLeftImage, bottomRightImage, topRightImage;
+    cv::namedWindow("BigImage", cv::WINDOW_KEEPRATIO);
+    cv::setMouseCallback("BigImage", onMouse, (void*)(&rawImage));
 
     cv::Scalar minValue, maxValue;
     cv::Size imageSize(IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -122,24 +128,30 @@ int main(int argc, char** argv)
     cv::Scalar *pMaxValue = &dataCenter.m_teamAMax;
     updateTrackbarPos(*pMinValue, *pMaxValue);
 
+
+    ColorSegmentation colorSegmentation(*pMinValue, *pMaxValue, dataCenter.m_colorMinArea);
+
     int button;
     bool running = true;
     std::vector<cv::Point2d> points;
     while(running)
     {
         camera >> rawImage;
-        cv::resize(rawImage, smallImage, imageSize);
-        smallImage.copyTo(bigImage(topLeftRect));
-        smallImage.copyTo(bigImage(bottomLeftRect));
+        rawImage.copyTo(bottomLeftImage);
 
         *pMinValue = minValue;
         *pMaxValue = maxValue;
         colorSegmentation.setThreshold(*pMinValue, *pMaxValue);
-        colorSegmentation.getBlocks(bigImage(topLeftRect), points);
-        colorSegmentation.drawPoints(bigImage(bottomLeftRect), cv::Scalar(0, 255, 255));
-        colorSegmentation.drawContours(bigImage(bottomLeftRect), cv::Scalar(255, 255 ,0));
-        cv::cvtColor(colorSegmentation.m_thresholdImage, bigImage(topRightRect), cv::COLOR_GRAY2BGR);
-        cv::cvtColor(colorSegmentation.m_filterImage, bigImage(bottomRightRect), cv::COLOR_GRAY2BGR);
+        colorSegmentation.getBlocks(rawImage, points);
+        colorSegmentation.drawPoints(bottomLeftImage, cv::Scalar(0, 255, 255));
+        colorSegmentation.drawContours(bottomLeftImage, cv::Scalar(255, 255 ,0));
+        cv::cvtColor(colorSegmentation.m_thresholdImage, topRightImage, cv::COLOR_GRAY2BGR);
+        cv::cvtColor(colorSegmentation.m_filterImage, bottomRightImage, cv::COLOR_GRAY2BGR);
+
+        cv::resize(rawImage, bigImage(topLeftRect), imageSize);
+        cv::resize(topRightImage, bigImage(topRightRect), imageSize);
+        cv::resize(bottomLeftImage, bigImage(bottomLeftRect), imageSize);
+        cv::resize(bottomRightImage, bigImage(bottomRightRect), imageSize);
 
         cv::putText(bigImage(topLeftRect), text, cv::Point(10, IMAGE_HEIGHT-10), cv::FONT_HERSHEY_DUPLEX, 1,
                 cv::Scalar(0, 0, 255), 1, cv::LINE_AA);

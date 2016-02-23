@@ -63,6 +63,8 @@ bool DataCenter::loadSegmentationThreshold()
 		return false;
 	}
 
+	paramFile["ObstacleMinArea"] >> m_obsMinArea;
+	paramFile["ColorMinArea"] >> m_colorMinArea;
     paramFile["TeamAMin"] >> m_teamAMin;
     paramFile["TeamAMax"] >> m_teamAMax;
     paramFile["TeamBMin"] >> m_teamBMin;
@@ -82,6 +84,8 @@ bool DataCenter::saveSegmentationThreshold()
 {
 	cv::FileStorage paramFile = cv::FileStorage(m_segmentationThresholdFilePath, cv::FileStorage::WRITE);
 
+	paramFile << "ObstacleMinArea" << m_obsMinArea;
+	paramFile << "ColorMinArea" << m_colorMinArea;
 	paramFile << "TeamAMin" << m_teamAMin;
 	paramFile << "TeamAMax" << m_teamAMax;
 	paramFile << "TeamBMin" << m_teamBMin;

@@ -32,15 +32,15 @@ public:
 	Image2World(DataCenter *in_dataCenter);
 	~Image2World();
 
-	bool fixErrorByHeight(std::vector<cv::Point2d>& in_points);
+	bool fixErrorByHeight(std::vector<cv::Point2d>& in_points, double in_ObjectHeight);
 	bool undistortPoints(std::vector<cv::Point2d>& in_pointsA,
-			std::vector<cv::Point2d>& in_pointsB, double in_heightCorrection);
+			std::vector<cv::Point2d>& in_pointsB);
 	bool getTransMat(cv::InputArray in_pointsA,
 			cv::InputOutputArray in_pointsB, cv::OutputArray in_mat);
 	bool perspectiveTransform(cv::InputArray in_pointsA,
 			cv::InputOutputArray in_pointsB);
 	bool convert2Field(std::vector<cv::Point2d>& in_pointsA,
-			std::vector<cv::Point2d>& in_pointsB, double in_height);
+			std::vector<cv::Point2d>& in_pointsB, double in_ObjectHeight);
 	bool changeCoordinate(std::vector<cv::Point2d>& in_pointsA,
 			std::vector<cv::Point2d>& in_pointsB);
 };

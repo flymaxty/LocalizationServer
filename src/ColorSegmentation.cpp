@@ -7,10 +7,12 @@
 
 #include "ColorSegmentation.h"
 
-ColorSegmentation::ColorSegmentation()
+ColorSegmentation::ColorSegmentation(cv::Scalar minValue, cv::Scalar maxValue, double in_minArea)
 {
     // TODO Auto-generated constructor stub
-
+    m_minValue = minValue;
+    m_maxValue = maxValue;
+    m_minArea = in_minArea;
 }
 
 ColorSegmentation::~ColorSegmentation()
@@ -69,7 +71,7 @@ bool ColorSegmentation::getBlocks(cv::InputArray in_image, std::vector<cv::Point
     {
         for(uint16_t i=0; i<m_contours.size(); i++)
         {
-        	if(fabs(cv::contourArea(m_contours[i])) > 90)
+        	if(fabs(cv::contourArea(m_contours[i])) > m_minArea)
         	{
                 mnt = cv::moments(m_contours[i]);
                 cx = mnt.m10 / mnt.m00;

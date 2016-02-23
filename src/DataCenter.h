@@ -19,6 +19,8 @@ public:
     RobotTeam m_teamB;
 
     //Threshold
+    double m_obsMinArea;
+    double m_colorMinArea;
     cv::Scalar m_teamAMin;
     cv::Scalar m_teamAMax;
     cv::Scalar m_teamBMin;
@@ -54,7 +56,6 @@ public:
     //Obstacle
     std::vector<Obstacle> m_obstacles;
     double m_obsHeight;
-    double m_obsMinArea;
 
     //MQTT topic
     std::string m_mqttNodeName;

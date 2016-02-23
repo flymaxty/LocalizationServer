@@ -27,20 +27,23 @@ Image2World::~Image2World()
 	// TODO Auto-generated destructor stub
 }
 
-/*
-bool Image2World::fixErrorByHeight(std::vector<cv::Point2d>& in_points)
+
+bool Image2World::fixErrorByHeight(std::vector<cv::Point2d>& in_points, double in_ObjectHeight)
 {
+	double T = 1.0 - in_ObjectHeight / m_cameraHeight;
+	cv::Point2d fieldCenter(m_fieldWidth / 2, m_fieldHeight / 2);
+
 	for(uint16_t i=0; i< in_points.size(); i++)
 	{
 		std::cout << in_points[i] << " : ";
-		in_points[i] = in_points[i] * m_heightCorrection;
+		in_points[i] = in_points[i] * T + fieldCenter*(1-T);
 		std::cout << in_points[i] << std::endl;
 	}
 	return true;
-}*/
+}
 
 bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
-		std::vector<cv::Point2d>& in_pointsB, double in_height)
+		std::vector<cv::Point2d>& in_pointsB, double in_Objectheight)
 {
 	in_pointsB.clear();
 	if(in_pointsA.size() == 0)
@@ -49,10 +52,10 @@ bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
 	}
 
 	std::vector<cv::Point2d> undistortPointsB, mirrorFieldPoints;
-	double heightCorrection = 1.0 - in_height / m_cameraHeight;
-	undistortPoints(in_pointsA, undistortPointsB, heightCorrection);
+
+	undistortPoints(in_pointsA, undistortPointsB);
 	perspectiveTransform(undistortPointsB, in_pointsB);
-	//fixErrorByHeight(in_pointsB);
+	fixErrorByHeight(in_pointsB, in_Objectheight);
 	//changeCoordinate(mirrorFieldPoints, in_pointsB);
 	return true;
 }
@@ -84,7 +87,7 @@ bool Image2World::changeCoordinate(std::vector<cv::Point2d>& in_pointsA,
 }
 
 bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
-		std::vector<cv::Point2d>& in_pointsB, double in_heightCorrection)
+		std::vector<cv::Point2d>& in_pointsB)
 {
 	in_pointsB.clear();
 	if(in_pointsA.size() == 0)
@@ -94,16 +97,16 @@ bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
 
 	cv::Mat src(in_pointsA), dst;
 
-	cv::undistortPoints(src, dst, m_cameraMatrix, m_distCoeffs);
+	cv::undistortPoints(src, dst, m_cameraMatrix, m_distCoeffs, cv::noArray(), m_cameraMatrix);
 	in_pointsB.clear();
 	cv::Point2d tempPoint;
     for(int i=0; i<dst.rows; i++)
     {
-    	//std::cout << "x: " << dst.at<double>(i, 0) << " y: " << dst.at<double>(i, 1) << std::endl;
+    	std::cout << "x: " << dst.at<double>(i, 0) << " y: " << dst.at<double>(i, 1) << std::endl;
+    	tempPoint.x = dst.at<double>(i, 0);
+    	tempPoint.y = dst.at<double>(i, 1);
     	//tempPoint.x = dst.at<double>(i, 0) * m_cameraMatrix.at<double>(0, 0) + m_cameraMatrix.at<double>(0, 2);
     	//tempPoint.y = dst.at<double>(i, 1) * m_cameraMatrix.at<double>(1, 1) + m_cameraMatrix.at<double>(1, 2);
-    	tempPoint.x = dst.at<double>(i, 0) * m_cameraMatrix.at<double>(0, 0) * in_heightCorrection + m_cameraMatrix.at<double>(0, 2);
-    	tempPoint.y = dst.at<double>(i, 1) * m_cameraMatrix.at<double>(1, 1) * in_heightCorrection + m_cameraMatrix.at<double>(1, 2);
     	in_pointsB.push_back(tempPoint);
     }
 	return true;
