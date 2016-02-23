@@ -31,8 +31,11 @@ Image2World::~Image2World()
 bool Image2World::fixErrorByHeight(std::vector<cv::Point2d>& in_points, double in_ObjectHeight)
 {
 	double T = 1.0 - in_ObjectHeight / m_cameraHeight;
-	cv::Point2d fieldCenter(m_fieldWidth / 2, m_fieldHeight / 2);
+	//cv::Point2d fieldCenter(m_fieldWidth / 2, m_fieldHeight / 2);
+	cv::Point2d fieldCenter(m_cameraMatrix.at<double>(0, 2), m_cameraMatrix.at<double>(1, 2));
+	//cv::Point2d fieldCenter(512, 384);
 
+	std::cout << fieldCenter << " ::::::: " << std::endl;
 	for(uint16_t i=0; i< in_points.size(); i++)
 	{
 		std::cout << in_points[i] << " : ";
@@ -54,8 +57,9 @@ bool Image2World::convert2Field(std::vector<cv::Point2d>& in_pointsA,
 	std::vector<cv::Point2d> undistortPointsB, mirrorFieldPoints;
 
 	undistortPoints(in_pointsA, undistortPointsB);
+	fixErrorByHeight(undistortPointsB, in_Objectheight);
 	perspectiveTransform(undistortPointsB, in_pointsB);
-	fixErrorByHeight(in_pointsB, in_Objectheight);
+	//fixErrorByHeight(in_pointsB, in_Objectheight);
 	//changeCoordinate(mirrorFieldPoints, in_pointsB);
 	return true;
 }

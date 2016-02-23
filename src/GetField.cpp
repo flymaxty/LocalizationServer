@@ -145,7 +145,7 @@ int main(int argc, char** argv)
     image2World.m_imageWidth = dataCenter.m_imageWidth;
     std::vector<cv::Point2d> imageCenter, imageCenterInMap;
     imageCenter.push_back(cv::Point2d(dataCenter.m_imageWidth/2, dataCenter.m_imageHeight/2));
-    image2World.convert2Field(imageCenter, imageCenterInMap, 0);
+    image2World.convert2Field(imageCenter, imageCenterInMap, 0.005);
     std::cout << imageCenterInMap << std::endl;
     dataCenter.m_imageCenterInMap = imageCenterInMap[0];
     dataCenter.saveImageTransform();

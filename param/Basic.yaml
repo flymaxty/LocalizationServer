@@ -11,7 +11,7 @@ FieldHeight: 0.574
 
 #Robot size
 RobotRadius: 0.05
-RobotHeight: 0.133
+RobotHeight: 0.0614
 
 #Obstacle
 ObsMinArea: 90

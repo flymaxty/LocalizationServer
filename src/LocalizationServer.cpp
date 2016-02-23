@@ -109,7 +109,7 @@ int main(int argc, char** argv)
         camera.retrieve(rawImage);
         rawImage.copyTo(realImage);
 
-        obsSegmentation.getBlocks(rawImage, obsPoints);
+        //obsSegmentation.getBlocks(rawImage, obsPoints);
         redSegmentation.getBlocks(rawImage, redPoints);
         greenSegmentation.getBlocks(rawImage, greenPoints);
         numb1Segmentation.getBlocks(rawImage, numb1Points);

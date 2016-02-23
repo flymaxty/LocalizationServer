@@ -423,8 +423,8 @@ int main( int argc, char** argv )
     else
     {
         capture.open(cameraId);
-        capture.set(cv::CAP_PROP_FRAME_WIDTH,1920);
-        capture.set(cv::CAP_PROP_FRAME_HEIGHT,1080);
+        capture.set(cv::CAP_PROP_FRAME_WIDTH,1024);
+        capture.set(cv::CAP_PROP_FRAME_HEIGHT,768);
     }
 
     if( !capture.isOpened() && imageList.empty() )
