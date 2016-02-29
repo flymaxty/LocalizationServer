@@ -5,8 +5,8 @@
 #include "DataCenter.h"
 #include "ColorSegmentation.h"
 
-#define IMAGE_WIDTH     512
-#define IMAGE_HEIGHT    384
+#define IMAGE_WIDTH     640
+#define IMAGE_HEIGHT    512
 
 const std::string aboutString = "GetColor v0.1.0";
 const std::string paramKeys =

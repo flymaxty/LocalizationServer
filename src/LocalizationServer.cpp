@@ -80,7 +80,7 @@ int main(int argc, char** argv)
         camera.grab();
     }
 
-    cv::namedWindow("LocalizationServer", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("LocalizationServer", cv::WINDOW_KEEPRATIO);
     cv::Mat rawImage, realImage;
 
     std::vector<cv::Point2d> obsPoints, realObsPoints;
@@ -107,9 +107,10 @@ int main(int argc, char** argv)
         gettimeofday(&startTime, NULL);
 
         camera.retrieve(rawImage);
+        //camera >> rawImage;
         rawImage.copyTo(realImage);
 
-        //obsSegmentation.getBlocks(rawImage, obsPoints);
+        obsSegmentation.getBlocks(rawImage, obsPoints);
         redSegmentation.getBlocks(rawImage, redPoints);
         greenSegmentation.getBlocks(rawImage, greenPoints);
         numb1Segmentation.getBlocks(rawImage, numb1Points);
@@ -218,7 +219,7 @@ int main(int argc, char** argv)
     }
 
     void* result;
-    pthread_join(grabThread, &result);
+    //pthread_join(grabThread, &result);
     camera.release();
 
     return 0;

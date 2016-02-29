@@ -6,23 +6,25 @@ MasterIP: "127.0.0.1"
 LocalizationTopic: spider_viz
 
 #Real map size
-FieldWidth: 0.675
-FieldHeight: 0.574
+FieldWidth: 1.25
+FieldHeight: 1.11
 
 #Robot size
 RobotRadius: 0.05
-RobotHeight: 0.0614
+RobotHeight: 0.115
 
 #Obstacle
-ObsMinArea: 90
+ObsMinArea: 40
 ObsHeight: 0.0614
 
 #Camera Index(camera number or video file path)
 #CameraIndex: "video/multi_move.avi"
 #CameraIndex: "video/error_check.avi"
 CameraIndex: "1"
-CameraHeight: 0.7925
+CameraHeight: 1.624
 
 #Camera image size(warnning: please check calibration program param)
-ImageWidth: 1024
-ImageHeight: 768
+#ImageWidth: 1920
+#ImageHeight: 1080
+ImageWidth: 1280
+ImageHeight: 1024
