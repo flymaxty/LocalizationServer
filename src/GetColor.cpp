@@ -5,8 +5,8 @@
 #include "DataCenter.h"
 #include "ColorSegmentation.h"
 
-#define IMAGE_WIDTH     640
-#define IMAGE_HEIGHT    512
+#define IMAGE_WIDTH     512
+#define IMAGE_HEIGHT    384
 
 const std::string aboutString = "GetColor v0.1.0";
 const std::string paramKeys =
@@ -40,8 +40,8 @@ void onMouse(int event, int x, int y, int flags, void* in_data)
 
         int yValue, uValue, vValue;
         cv::cvtColor(*pImage, yuvImage, cv::COLOR_BGR2YUV);
-        double targetX = (x-10) * widthTimes;
-        double targetY = (y-10) * heightTimes;
+        double targetX = (x-10) * 2;
+        double targetY = (y-10) * 2;
         yValue = yuvImage.at<cv::Vec3b>(targetY, targetX)[0];
         uValue = yuvImage.at<cv::Vec3b>(targetY, targetX)[1];
         vValue = yuvImage.at<cv::Vec3b>(targetY, targetX)[2];
@@ -72,21 +72,23 @@ int main(int argc, char** argv)
 {
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
+    
+    system("pwd");
 
     DataCenter dataCenter;
     widthTimes = dataCenter.m_imageWidth / IMAGE_WIDTH;
     heightTimes = dataCenter.m_imageHeight / IMAGE_HEIGHT;
-    std::cout << widthTimes << std::endl;
+    //std::cout << widthTimes << std::endl;
 
     cv::VideoCapture camera;
     if(dataCenter.m_cameraString.length() == 1)
     {
-    	int videoIndex = std::stoi(dataCenter.m_cameraString);
-    	camera.open(videoIndex);
+        int videoIndex = std::stoi(dataCenter.m_cameraString);
+        camera.open(videoIndex);
     }
     else
     {
-    	camera.open(dataCenter.m_cameraString);
+        camera.open(dataCenter.m_cameraString);
     }
     camera.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_imageWidth);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_imageHeight);
@@ -109,25 +111,25 @@ int main(int argc, char** argv)
     cv::Rect bottomLeftRect(cv::Point(10, 10+imageSize.height+10), imageSize);
     cv::Rect bottomRightRect(cv::Point(10+imageSize.width+10, 10+imageSize.height+10), imageSize);
 
-    cv::namedWindow("Config", cv::WINDOW_KEEPRATIO);
-    cv::createTrackbar("yMinValue", "Config", NULL,
+    cv::namedWindow("Config");
+    int value = 100;
+    cv::createTrackbar("yMinValue", "Config", &value,
                         255, ValueCallback, (void*)(&minValue.val[0]));
-    cv::createTrackbar("yMaxValue", "Config", NULL,
+    cv::createTrackbar("yMaxValue", "Config", &value,
                         255, ValueCallback, (void*)(&maxValue.val[0]));
-    cv::createTrackbar("uMinValue", "Config", NULL,
+    cv::createTrackbar("uMinValue", "Config", &value,
                         255, ValueCallback, (void*)(&minValue.val[1]));
-    cv::createTrackbar("uMaxValue", "Config", NULL,
+    cv::createTrackbar("uMaxValue", "Config", &value,
                         255, ValueCallback, (void*)(&maxValue.val[1]));
-    cv::createTrackbar("vMinValue", "Config", NULL,
+    cv::createTrackbar("vMinValue", "Config", &value,
                         255, ValueCallback, (void*)(&minValue.val[2]));
-    cv::createTrackbar("vMaxValue", "Config", NULL,
+    cv::createTrackbar("vMaxValue", "Config", &value,
                         255, ValueCallback, (void*)(&maxValue.val[2]));
 
     std::string text = "Team A";
     cv::Scalar *pMinValue = &dataCenter.m_teamAMin;
     cv::Scalar *pMaxValue = &dataCenter.m_teamAMax;
     updateTrackbarPos(*pMinValue, *pMaxValue);
-
 
     ColorSegmentation colorSegmentation(*pMinValue, *pMaxValue, dataCenter.m_colorMinArea);
 

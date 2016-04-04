@@ -14,17 +14,17 @@
 
 #include "RobotStruct.h"
 
-class Broadcaster: public mosquittopp::mosquittopp
+class Broadcaster: public mosqpp::mosquittopp
 {
 public:
-	const char* m_host;
-	const char* m_topic;
-	int m_port;
+    const char* m_host;
+    const char* m_topic;
+    int m_port;
 public:
-	Broadcaster(const char *in_id, const char *in_topic, const char * in_host, int in_port=1883);
-	virtual ~Broadcaster();
-	bool connectServer();
-	void publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB, std::vector<Obstacle> in_obstacles);
+    Broadcaster(const char *in_id, const char *in_topic, const char * in_host, int in_port=1883);
+    virtual ~Broadcaster();
+    bool connectServer();
+    void publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB, std::vector<Obstacle> in_obstacles);
 
 };
 

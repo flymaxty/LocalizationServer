@@ -115,7 +115,7 @@ bool TeamDetect::getTeam(std::vector<cv::Point2d>& in_teamPoints, std::vector<cv
 
 bool TeamDetect::drawTeam(cv::InputOutputArray in_image, cv::Scalar in_scalar, RobotTeam& in_team)
 {
-	cv::Mat image = in_image.getMat();
+    cv::Mat image = in_image.getMat();
     double radius = 20;
     int thickness = 1;
 

@@ -1,15 +1,19 @@
-#include "opencv2/core.hpp"
-#include <opencv2/core/utility.hpp>
+/*#include "opencv2/core.hpp"
+#include "opencv2/core/utility.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/calib3d.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/videoio.hpp"
-#include "opencv2/highgui.hpp"
+#include "opencv2/highgui.hpp"*/
 
 #include <cctype>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#include "opencv2/opencv.hpp"
+
+#include "DataCenter.h"
 
 using namespace cv;
 using namespace std;
@@ -36,9 +40,6 @@ const char * usage =
 "one_extra_view.jpg\n"
 "</images>\n"
 "</opencv_storage>\n";
-
-
-
 
 const char* liveCaptureHelp =
     "When the live video from camera is used as input, the following hot-keys may be used:\n"
@@ -422,9 +423,19 @@ int main( int argc, char** argv )
     }
     else
     {
-        capture.open(cameraId);
-        capture.set(cv::CAP_PROP_FRAME_WIDTH,1280);
-        capture.set(cv::CAP_PROP_FRAME_HEIGHT,1024);
+        DataCenter dataCenter;
+
+        if(dataCenter.m_cameraString.length() == 1)
+        {
+            int videoIndex = std::stoi(dataCenter.m_cameraString);
+            capture.open(videoIndex);
+        }
+        else
+        {
+            capture.open(dataCenter.m_cameraString);
+        }
+        capture.set(cv::CAP_PROP_FRAME_WIDTH, dataCenter.m_imageWidth);
+        capture.set(cv::CAP_PROP_FRAME_HEIGHT, dataCenter.m_imageHeight);
     }
 
     if( !capture.isOpened() && imageList.empty() )

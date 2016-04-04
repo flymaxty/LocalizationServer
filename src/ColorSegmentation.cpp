@@ -9,7 +9,6 @@
 
 ColorSegmentation::ColorSegmentation(cv::Scalar minValue, cv::Scalar maxValue, double in_minArea)
 {
-    // TODO Auto-generated constructor stub
     m_minValue = minValue;
     m_maxValue = maxValue;
     m_minArea = in_minArea;
@@ -17,13 +16,15 @@ ColorSegmentation::ColorSegmentation(cv::Scalar minValue, cv::Scalar maxValue, d
 
 ColorSegmentation::~ColorSegmentation()
 {
-    // TODO Auto-generated destructor stub
+
 }
 
 bool ColorSegmentation::setThreshold(cv::Scalar minValue, cv::Scalar maxValue)
 {
     m_minValue = minValue;
     m_maxValue = maxValue;
+    
+    return 0;
 }
 
 void ColorSegmentation::drawPoints(cv::InputOutputArray in_image, cv::Scalar in_color)
@@ -71,13 +72,13 @@ bool ColorSegmentation::getBlocks(cv::InputArray in_image, std::vector<cv::Point
     {
         for(uint16_t i=0; i<m_contours.size(); i++)
         {
-        	if(fabs(cv::contourArea(m_contours[i])) > m_minArea)
-        	{
+            if(fabs(cv::contourArea(m_contours[i])) > m_minArea)
+            {
                 mnt = cv::moments(m_contours[i]);
                 cx = mnt.m10 / mnt.m00;
                 cy = mnt.m01 / mnt.m00;
                 in_points.push_back(cv::Point2d(cx, cy));
-        	}
+            }
 
         }
     }

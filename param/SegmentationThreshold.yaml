@@ -1,13 +1,11 @@
 %YAML:1.0
-ObstacleMinArea: 150.
-ColorMinArea: 50.
-TeamAMin: [ 119., 145., 6., 0. ]
-TeamAMax: [ 183., 182., 73., 0. ]
-TeamBMin: [ 105., 85., 35., 0. ]
-TeamBMax: [ 192., 155., 63., 0. ]
-TeamNumb1Min: [ 0., 0., 0., 0. ]
-TeamNumb1Max: [ 0., 0., 0., 0. ]
-TeamNumb2Min: [ 173., 122., 0., 0. ]
-TeamNumb2Max: [ 221., 177., 43., 0. ]
-CartesianMin: [ 14., 63., 29., 0. ]
-CartesianMax: [ 117., 180., 107., 0. ]
+TeamAMin: [ 18., 148., 73., 0. ]
+TeamAMax: [ 146., 187., 141., 0. ]
+TeamBMin: [ 35., 28., 25., 0. ]
+TeamBMax: [ 165., 130., 100., 0. ]
+TeamNumb1Min: [ 89., 142., 23., 0. ]
+TeamNumb1Max: [ 181., 162., 67., 0. ]
+TeamNumb2Min: [ 82., 68., 120., 0. ]
+TeamNumb2Max: [ 155., 105., 207., 0. ]
+CartesianMin: [ 0., 0., 0., 0. ]
+CartesianMax: [ 42., 255., 255., 0. ]

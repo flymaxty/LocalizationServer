@@ -1,6 +1,15 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+set (CMAKE_CXX_FLAGS "--std=c++11 -stdlib=libc++")
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+set(CMAKE_PREFIX_PATH "/usr/local/opt/opencv3")
+INCLUDE_DIRECTORIES("/usr/local/include")
+link_directories("/usr/local/lib")
+ENDIF()
+
 FIND_PACKAGE(OpenCV REQUIRED)
+FIND_PACKAGE(spdlog CONFIG REQUIRED)
 
 ADD_EXECUTABLE(LocalizationServer LocalizationServer.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp Image2World.cpp Broadcaster.cpp cJSON/cJSON.c)
 TARGET_LINK_LIBRARIES(LocalizationServer ${OpenCV_LIBS} mosquittopp pthread)
@@ -11,8 +20,8 @@ TARGET_LINK_LIBRARIES(GetField ${OpenCV_LIBS})
 ADD_EXECUTABLE(GetColor GetColor.cpp ColorSegmentation.cpp DataCenter.cpp)
 TARGET_LINK_LIBRARIES(GetColor ${OpenCV_LIBS})
 
-ADD_EXECUTABLE(Calibration Calibration.cpp)
+ADD_EXECUTABLE(Calibration Calibration.cpp DataCenter.cpp)
 TARGET_LINK_LIBRARIES(Calibration ${OpenCV_LIBS})
 
 ADD_EXECUTABLE(Broadcaster_test Broadcaster_test.cpp Broadcaster.cpp cJSON/cJSON.c)
-TARGET_LINK_LIBRARIES(Broadcaster_test mosquittopp)
+TARGET_LINK_LIBRARIES(Broadcaster_test mosquittopp pthread)
