@@ -1,9 +1,18 @@
-/*
- * Image2World.cpp
- *
- *  Created on: Jan 6, 2016
- *      Author: ye
- */
+/**
+* The MIT License (MIT)
+* 
+* Copyright (c) 2016 Tian Ye
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+**/
 
 #include "Image2World.h"
 
@@ -36,12 +45,12 @@ bool Image2World::fixErrorByHeight(std::vector<cv::Point2d>& in_points, double i
     //cv::Point2d fieldCenter(512, 384);
 
     //std::cout << fieldCenter << " ::::::: " << std::endl;
-    for(uint16_t i=0; i< in_points.size(); i++)
+/*    for(uint16_t i=0; i< in_points.size(); i++)
     {
         std::cout << in_points[i] << " : ";
         in_points[i] = in_points[i] * T + fieldCenter*(1-T);
         std::cout << in_points[i] << std::endl;
-    }
+    }*/
     return true;
 }
 
@@ -106,7 +115,7 @@ bool Image2World::undistortPoints(std::vector<cv::Point2d>& in_pointsA,
     cv::Point2d tempPoint;
     for(int i=0; i<dst.rows; i++)
     {
-        std::cout << "x: " << dst.at<double>(i, 0) << " y: " << dst.at<double>(i, 1) << std::endl;
+        //std::cout << "x: " << dst.at<double>(i, 0) << " y: " << dst.at<double>(i, 1) << std::endl;
         tempPoint.x = dst.at<double>(i, 0);
         tempPoint.y = dst.at<double>(i, 1);
         //tempPoint.x = dst.at<double>(i, 0) * m_cameraMatrix.at<double>(0, 0) + m_cameraMatrix.at<double>(0, 2);

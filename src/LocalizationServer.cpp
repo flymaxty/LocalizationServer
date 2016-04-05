@@ -1,3 +1,19 @@
+/**
+* The MIT License (MIT)
+* 
+* Copyright (c) 2016 Tian Ye
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+**/
+
 #include <iostream>
 #include <string>
 #include <sys/time.h>
@@ -5,6 +21,10 @@
 #include <opencv2/opencv.hpp>
 
 #include "cJSON/cJSON.h"
+
+#define ELPP_DEFAULT_LOGGER "LocalizationServer"
+#include "easylogging++.h"
+INITIALIZE_EASYLOGGINGPP
 
 #include "RobotStruct.h"
 #include "DataCenter.h"
@@ -45,6 +65,10 @@ void* grabFunc(void* in_data)
 
 int main(int argc, char** argv)
 {
+    START_EASYLOGGINGPP(argc, argv);
+    el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+    el::Logger* mainLogger = el::Loggers::getLogger("LocalizationServer");
+
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
 
@@ -91,8 +115,7 @@ int main(int argc, char** argv)
         pthread_create(&grabThread, NULL, grabFunc, (void*)(&camera));
     }
 
-    //cv::namedWindow("LocalizationServer", cv::WINDOW_KEEPRATIO);
-    cv::namedWindow("LocalizationServer");
+    cv::namedWindow("LocalizationServer", cv::WINDOW_KEEPRATIO);
     cv::Mat rawImage, realImage;
 
     std::vector<cv::Point2d> obsPoints, realObsPoints;

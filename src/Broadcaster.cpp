@@ -1,9 +1,18 @@
-/*
- * Broadcaster.cpp
- *
- *  Created on: Feb 2, 2016
- *      Author: ye
- */
+/**
+* The MIT License (MIT)
+* 
+* Copyright (c) 2016 Tian Ye
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+**/
 
 #include <iostream>
 #include "string.h"
@@ -11,7 +20,6 @@
 #include "cJSON/cJSON.h"
 
 #include "Broadcaster.h"
-#include "common.h"
 
 Broadcaster::Broadcaster(const char *in_id, const char *in_topic,
         const char * in_host, int in_port): mosquittopp(in_id)
@@ -20,7 +28,7 @@ Broadcaster::Broadcaster(const char *in_id, const char *in_topic,
     m_host = in_host;
     m_port = in_port;
 
-    mosqpp::lib_init();
+    lib_init();
 }
 
 Broadcaster::~Broadcaster()
@@ -30,17 +38,12 @@ Broadcaster::~Broadcaster()
 
 bool Broadcaster::connectServer()
 {
-    //connect(m_host, m_port);
-    //std::cout << connect(m_host, m_port) << std::endl;
     connect(m_host, m_port);
-    LOG(INFO) << "MQTT connect to " << m_host << ":" << m_port;
     return true;
 }
 
 void Broadcaster::publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB, std::vector<Obstacle> in_obstacles)
 {
-    //cJSON *root, *elem;
-
     cJSON *root = cJSON_CreateArray(), *elem;
     for(int i=0; i<4; i++)
     {
@@ -54,9 +57,6 @@ void Broadcaster::publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB, 
             cJSON_AddNumberToObject(elem, "theta", in_teamB.robots[i].theta);
         }
     }
-
-    //cJSON_Delete(elem);
-    //std::cout << "lalla" << std::endl;
 
     for(int i=0; i<4; i++)
     {
@@ -82,10 +82,6 @@ void Broadcaster::publishLocalization(RobotTeam& in_teamA, RobotTeam& in_teamB, 
 
     char* buffer = cJSON_Print(root);
     publish(NULL, m_topic, strlen(buffer), reinterpret_cast<const uint8_t*>(buffer), 1, false);
-
-    //std::string bufferS(buffer);
-
-    //std::cout << bufferS << std::endl;
 
     cJSON_Delete(root);
 }

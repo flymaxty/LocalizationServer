@@ -1,15 +1,8 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
-set (CMAKE_CXX_FLAGS "--std=c++11 -stdlib=libc++")
-
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-set(CMAKE_PREFIX_PATH "/usr/local/opt/opencv3")
-INCLUDE_DIRECTORIES("/usr/local/include")
-link_directories("/usr/local/lib")
-ENDIF()
+set (CMAKE_CXX_STANDARD 11)
 
 FIND_PACKAGE(OpenCV REQUIRED)
-FIND_PACKAGE(spdlog CONFIG REQUIRED)
 
 ADD_EXECUTABLE(LocalizationServer LocalizationServer.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp Image2World.cpp Broadcaster.cpp cJSON/cJSON.c)
 TARGET_LINK_LIBRARIES(LocalizationServer ${OpenCV_LIBS} mosquittopp pthread)
