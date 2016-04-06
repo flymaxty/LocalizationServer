@@ -16,12 +16,14 @@
 
 #include "DataCenter.h"
 
+#include <sstream>
+
 DataCenter::DataCenter()
 {
     m_basicFilePath = "param/Basic.yaml";
     m_segmentationThresholdFilePath = "param/SegmentationThreshold.yaml";
-    m_cameraCalibrationFilePath = "param/CameraCalibration.yaml";
     m_imageTransformFileNamePath = "param/ImageTransform.yaml";
+    //m_cameraCalibrationFilePath = "param/CameraCalibration.yaml";
 
     loadAllParam();
 }
@@ -46,6 +48,9 @@ bool DataCenter::loadAllParam()
 
 bool DataCenter::loadCameraCalibration()
 {
+    std::ostringstream stringStream;
+    stringStream << "param/CameraCalibration/" << m_imageWidth << "_" << m_imageHeight << ".yaml";
+    m_cameraCalibrationFilePath = stringStream.str();
     cv::FileStorage paramFile = cv::FileStorage(m_cameraCalibrationFilePath, cv::FileStorage::READ);
 
     if(!paramFile.isOpened())

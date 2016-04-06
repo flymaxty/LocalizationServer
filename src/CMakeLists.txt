@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 set (CMAKE_CXX_STANDARD 11)
 
-FIND_PACKAGE(OpenCV REQUIRED)
+FIND_PACKAGE(OpenCV 3 REQUIRED)
 
 ADD_EXECUTABLE(LocalizationServer LocalizationServer.cpp DataCenter.cpp ColorSegmentation.cpp TeamDetect.cpp Image2World.cpp Broadcaster.cpp cJSON/cJSON.c)
 TARGET_LINK_LIBRARIES(LocalizationServer ${OpenCV_LIBS} mosquittopp pthread)

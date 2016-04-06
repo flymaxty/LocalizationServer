@@ -16,7 +16,9 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <sys/time.h>
+#include <unistd.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -65,9 +67,19 @@ void* grabFunc(void* in_data)
 
 int main(int argc, char** argv)
 {
+    //Format log file name
+    std::ostringstream stringStream;
+    stringStream << "logs/" << ELPP_DEFAULT_LOGGER << ".log";
+    std::string logFilePath = stringStream.str();
+
+    //reconfigure logger's log file path and name
+    el::Configurations defaultConf;
+    defaultConf.setGlobally(el::ConfigurationType::Filename, logFilePath);
+    el::Loggers::setDefaultConfigurations(defaultConf, true);
+    el::Logger* mainLogger = el::Loggers::getLogger(ELPP_DEFAULT_LOGGER);
+    
     START_EASYLOGGINGPP(argc, argv);
     el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-    el::Logger* mainLogger = el::Loggers::getLogger("LocalizationServer");
 
     cv::CommandLineParser parser(argc, argv, paramKeys);
     helpMessage(parser);
@@ -246,6 +258,7 @@ int main(int argc, char** argv)
             gettimeofday(&stopTime, NULL);
             timeUse = (stopTime.tv_sec - startTime.tv_sec)*1000000.0 + (stopTime.tv_usec - startTime.tv_usec);
             std::cout << "FPS: " << 1000000.0 / timeUse << std::endl;
+            LOG(INFO) << "FPS";
 
             bk.publishLocalization(dataCenter.m_teamA, dataCenter.m_teamB, dataCenter.m_obstacles);
         }
